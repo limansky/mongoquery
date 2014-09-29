@@ -10,7 +10,9 @@ class BSONParserTest extends FlatSpec with Matchers {
   def parse[T](p: Parser[T], s: String): Option[T] = {
     BSONParser.parseAll(p, s) match {
       case Success(r, _) => Some(r)
-      case _ => None
+      case NoSuccess(m, _) =>
+        sys.error(m)
+        None
     }
   }
 
@@ -25,6 +27,11 @@ class BSONParserTest extends FlatSpec with Matchers {
 
   it should "parse double values" in {
     parse(BSONParser.value, "42.5") should be (Some(MongoDouble(42.5)))
+  }
+
+  it should "parse arrays" in {
+    parse(BSONParser.value, "[\"String\", 5, 3.14]") should be (Some(
+        MongoArray(List(MongoString("String"), MongoInt(5), MongoDouble(3.14)))))
   }
 
   it should "parse key value pairs" in {

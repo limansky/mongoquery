@@ -4,7 +4,7 @@ import scala.util.parsing.combinator.JavaTokenParsers
 
 trait BSONParser extends JavaTokenParsers {
 
-  def value: Parser[MongoValue] = string | int | double | obj
+  def value: Parser[MongoValue] = string | int | double | array | obj
 
   def string: Parser[MongoString] = stringV ^^ MongoString
 
@@ -15,6 +15,8 @@ trait BSONParser extends JavaTokenParsers {
   def int: Parser[MongoInt] = wholeNumber <~ not('.') ^^ { case w => MongoInt(w.toInt) }
 
   def double: Parser[MongoDouble] = floatingPointNumber ^^ { case f => MongoDouble(f.toDouble) }
+
+  def array: Parser[MongoArray] = "[" ~> repsep(value, ",") <~ "]" ^^ MongoArray
 
   def member: Parser[(String, MongoValue)] = (ident | stringV) ~ ":" ~ value ^^ { case i~_~v => (i, v) }
 
