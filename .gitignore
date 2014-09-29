@@ -1,0 +1,10 @@
+target/
+.project
+.classpath
+.cache
+.history
+.settings/
+.worksheet/
+*.orig
+*.swp
+console.devmode.log
