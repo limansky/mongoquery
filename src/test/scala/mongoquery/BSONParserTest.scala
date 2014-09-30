@@ -40,7 +40,21 @@ class BSONParserTest extends FlatSpec with Matchers {
   }
 
   it should "parse objects" in {
-    parse(BSONParser.obj, "{a : 1, b : 2}") should be (Some(MongoObject(Map("a" -> MongoInt(1), "b" -> MongoInt(2)))))
+    parse(BSONParser.obj, "{a : 1, b : 2}") should be (Some(
+        MongoObject(Map("a" -> MongoInt(1), "b" -> MongoInt(2)))))
   }
 
+  it should "parse nested arrays" in {
+    parse(BSONParser.obj, "{ c: [1,2,3]}") should be (Some(
+        MongoObject(Map("c" -> MongoArray(List(MongoInt(1), MongoInt(2), MongoInt(3)))))))
+  }
+
+  it should "parse nested objects" in {
+    parse(BSONParser.obj, "{ d: { e : \"ooo\" }}") should be (Some(
+        MongoObject(Map("d" -> MongoObject(Map("e" -> MongoString("ooo")))))))
+  }
+
+  it should "process special operators" in {
+    parse(BSONParser.obj, "{ $lt : 11 }") should be (Some(MongoObject(Map("$lt" -> MongoInt(11)))))
+  }
 }
