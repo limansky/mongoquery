@@ -1,9 +1,11 @@
 package mongoquery
 
+import mongoquery.bsonparser.Parser
+
 abstract class QueryBuilder[T] {
 
   def build(query: String): T = {
-    build(BSONParser.parse(query))
+    build(Parser.parse(query))
   }
 
   def build(obj: MongoObject): T = {
@@ -19,5 +21,5 @@ abstract class QueryBuilder[T] {
     boundValues(values)
   }
 
-  def boundValues(values: List[(String,Any)]): T
+  def boundValues(values: List[(String, Any)]): T
 }
