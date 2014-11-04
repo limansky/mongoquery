@@ -19,28 +19,30 @@ class Lexical extends StdLexical with BSONTokens {
 
   def wrapQuotes[T](p: Parser[T]): Parser[T] = ('"' ~> p <~ '"') | ('\'' ~> p <~ '\'')
 
-  class Scanner(in: Reader[Char], readers: List[Reader[Char]], args: Seq[Any]) extends super.Scanner(in) {
+  class Scanner(s: super.Scanner, readers: List[Reader[Char]], args: Seq[Any]) extends Reader[Token] { // super.Scanner(in) {
 
-    def this(readers: List[Reader[Char]], args: Seq[Any]) = this(readers.head, readers.tail, args)
+    def this(readers: List[Reader[Char]], args: Seq[Any]) = this(new super.Scanner(readers.head), readers.tail, args)
 
-    def this(in: String) = this(new CharArrayReader(in.toCharArray()), Nil, Nil)
+    def this(in: String) = this(new super.Scanner(in), Nil, Nil)
 
     override def first = {
-      if (super.atEnd && readers.nonEmpty) {
+      if (s.atEnd && readers.nonEmpty) {
         Variable(args.head)
       } else {
-        super.first
+        s.first
       }
     }
 
     override def rest = {
-      if (super.atEnd && readers.nonEmpty) {
-        new Scanner(readers.head, readers.tail, args.tail)
+      if (s.atEnd && readers.nonEmpty) {
+        new Scanner(new Lexical.super.Scanner(readers.head), readers.tail, args.tail)
       } else {
-        super.rest
+        new Scanner(s.rest, readers, args)
       }
     }
 
-    override def atEnd = super.atEnd && readers.isEmpty
+    override def atEnd = s.atEnd && readers.isEmpty
+
+    override def pos = s.pos
   }
 }

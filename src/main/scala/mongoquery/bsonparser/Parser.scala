@@ -8,6 +8,7 @@ import mongoquery.MongoDouble
 import mongoquery.MongoArray
 import mongoquery.MongoObject
 import scala.util.parsing.input.CharArrayReader
+import mongoquery.MongoArray
 
 class Parser extends StdTokenParsers {
 
@@ -25,7 +26,7 @@ class Parser extends StdTokenParsers {
   def anyKeyword: Parser[String] = elem("keyword", _.isInstanceOf[Keyword]) ^^ (_.chars)
 
   def variable: Parser[MongoValue[_]] = elem("var", _.isInstanceOf[Variable]) ^^ (
-    v => wrapVariable(v.asInstanceOf[Variable]))
+    v => wrapVariable(v.asInstanceOf[Variable].v))
 
   def int: Parser[MongoInt] = elem("int", _.isInstanceOf[NumericLit]) ^^ (v => MongoInt(v.chars.toInt))
 
@@ -39,10 +40,12 @@ class Parser extends StdTokenParsers {
 
   def obj: Parser[MongoObject] = "{" ~> repsep(member, ",") <~ "}" ^^ { case kvs => MongoObject(kvs.toMap) }
 
-  def wrapVariable(v: Variable): MongoValue[_] = v.v match {
+  def wrapVariable(v: Any): MongoValue[_] = v match {
     case s: String => MongoString(s)
     case i: Int => MongoInt(i)
     case d: Double => MongoDouble(d)
+    case s: Seq[_] => MongoArray(s.map(wrapVariable).toList)
+    case m: MongoValue[_] => m
   }
 }
 
