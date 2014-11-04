@@ -4,14 +4,6 @@ import mongoquery.bsonparser.Parser
 
 abstract class QueryBuilder[T] {
 
-  def build(query: String): T = {
-    build(Parser.parse(query))
-  }
-
-  def build(parts: List[String], args: Seq[Any]): T = {
-    build(Parser.parse(parts, args))
-  }
-
   def build(obj: MongoObject): T = {
 
     def processValue(v: MongoValue[_]): Any = v match {

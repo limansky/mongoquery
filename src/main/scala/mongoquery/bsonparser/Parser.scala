@@ -44,7 +44,7 @@ class Parser extends StdTokenParsers {
     case s: String => MongoString(s)
     case i: Int => MongoInt(i)
     case d: Double => MongoDouble(d)
-    case s: Seq[_] => MongoArray(s.map(wrapVariable).toList)
+    case s: Traversable[_] => MongoArray(s.map(wrapVariable).toList)
     case m: MongoValue[_] => m
   }
 }
