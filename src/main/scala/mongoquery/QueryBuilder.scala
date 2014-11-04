@@ -8,6 +8,10 @@ abstract class QueryBuilder[T] {
     build(Parser.parse(query))
   }
 
+  def build(parts: List[String], args: Seq[Any]): T = {
+    build(Parser.parse(parts, args))
+  }
+
   def build(obj: MongoObject): T = {
 
     def processValue(v: MongoValue[_]): Any = v match {

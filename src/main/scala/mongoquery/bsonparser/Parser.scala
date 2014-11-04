@@ -7,6 +7,7 @@ import mongoquery.MongoInt
 import mongoquery.MongoDouble
 import mongoquery.MongoArray
 import mongoquery.MongoObject
+import scala.util.parsing.input.CharArrayReader
 
 class Parser extends StdTokenParsers {
 
@@ -21,7 +22,10 @@ class Parser extends StdTokenParsers {
 
   def string: Parser[MongoString] = elem("string", _.isInstanceOf[StringLit]) ^^ (v => MongoString(v.chars))
 
-  def anyKeyword: Parser[String] = elem("string", _.isInstanceOf[Keyword]) ^^ (_.chars)
+  def anyKeyword: Parser[String] = elem("keyword", _.isInstanceOf[Keyword]) ^^ (_.chars)
+
+  def variable: Parser[MongoValue[_]] = elem("var", _.isInstanceOf[Variable]) ^^ (
+    v => wrapVariable(v.asInstanceOf[Variable]))
 
   def int: Parser[MongoInt] = elem("int", _.isInstanceOf[NumericLit]) ^^ (v => MongoInt(v.chars.toInt))
 
@@ -29,15 +33,30 @@ class Parser extends StdTokenParsers {
 
   def array: Parser[MongoArray] = ("[" ~> repsep(value, ",") <~ "]") ^^ MongoArray
 
-  def member: Parser[(String, MongoValue[_])] = (ident | anyKeyword) ~ ":" ~ value ^^ { case i ~ _ ~ v => (i, v) }
+  def member: Parser[(String, MongoValue[_])] = (ident | anyKeyword) ~ ":" ~ (value | variable) ^^ {
+    case i ~ _ ~ v => (i, v)
+  }
 
   def obj: Parser[MongoObject] = "{" ~> repsep(member, ",") <~ "}" ^^ { case kvs => MongoObject(kvs.toMap) }
 
+  def wrapVariable(v: Variable): MongoValue[_] = v.v match {
+    case s: String => MongoString(s)
+    case i: Int => MongoInt(i)
+    case d: Double => MongoDouble(d)
+  }
 }
 
 object Parser extends Parser {
   def parse(expr: String): MongoObject = {
     phrase(obj)(new lexical.Scanner(expr)) match {
+      case Success(r, _) => r
+      case NoSuccess(m, _) => throw new IllegalArgumentException(m)
+    }
+  }
+
+  def parse(parts: List[String], args: Seq[Any]): MongoObject = {
+    val rs = parts.map(p => new CharArrayReader(p.toCharArray))
+    phrase(obj)(new lexical.Scanner(rs, args)) match {
       case Success(r, _) => r
       case NoSuccess(m, _) => throw new IllegalArgumentException(m)
     }

@@ -7,8 +7,7 @@ package object casbah {
   implicit class CasbahHelper(val sc: StringContext) extends AnyVal {
 
     def mq(args: Any*): MongoDBObject = {
-      val str = sc.s(args.map(wrapValue): _*)
-      CasbahQueryBuilder.build(str)
+      CasbahQueryBuilder.build(sc.parts.toList, args.toList)
     }
 
     def wrapValue(v: Any): String = v match {
