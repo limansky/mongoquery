@@ -11,3 +11,5 @@ case class MongoDouble(override val value: Double) extends MongoValue[Double](va
 case class MongoArray(override val value: List[MongoValue[_]]) extends MongoValue[List[MongoValue[_]]](value)
 
 case class MongoObject(override val value: Map[String, MongoValue[_]]) extends MongoValue[Map[String, MongoValue[_]]](value)
+
+case class MongoId(override val value: String) extends MongoValue[String](value)

@@ -26,6 +26,14 @@ class ParserTest extends FlatSpec with Matchers {
     parseValue("42.5") should be(MongoDouble(42.5))
   }
 
+  it should "parse objectId values" in {
+    parseValue("ObjectId(\"0123456789abcdef01234567\")") should be(MongoId("0123456789abcdef01234567"))
+  }
+
+  it should "not allow invalid ObjectIds" in {
+    an[IllegalArgumentException] should be thrownBy (parseValue("ObjectId(\"Hello\")"))
+  }
+
   it should "parse arrays" in {
     parseValue("[\"String\", 5, 3.14]") should be(
       MongoArray(List(MongoString("String"), MongoInt(5), MongoDouble(3.14))))

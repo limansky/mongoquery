@@ -9,8 +9,7 @@ class Lexical extends StdLexical with BSONTokens {
   override def whitespace = rep(whitespaceChar)
 
   override def token = (
-    ident ^^ { case x ~ xs => Identifier(x :: xs mkString "") }
-    | rep1(digit) ~ '.' ~ rep1(digit) ^^ { case xs ~ '.' ~ ys => DoubleLit((xs ::: '.' :: ys).mkString) }
+    rep1(digit) ~ '.' ~ rep1(digit) ^^ { case xs ~ '.' ~ ys => DoubleLit((xs ::: '.' :: ys).mkString) }
     | ('$' ~> ident) ^^ { case x ~ xs => Keyword('$' :: x :: xs mkString "") }
     | super.token
   )
