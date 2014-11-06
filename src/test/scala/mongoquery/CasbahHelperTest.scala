@@ -2,8 +2,9 @@ package mongoquery
 
 import casbah._
 import org.scalatest.FlatSpec
-import com.mongodb.casbah.commons.MongoDBObject
+import com.mongodb.casbah.Imports._
 import org.scalatest.Matchers
+import org.bson.types.ObjectId
 
 class CasbahHelperTest extends FlatSpec with Matchers {
 
@@ -41,8 +42,14 @@ class CasbahHelperTest extends FlatSpec with Matchers {
   }
 
   it should "be possible to compose queries" in {
-    val sub = mq"{$$gt : 10}"
+    val sub: MongoDBObject = mq"{$$gt : 10}"
     val q: MongoDBObject = mq"{price : $sub}"
     q should equal(MongoDBObject("price" -> MongoDBObject("$gt" -> 10)))
+  }
+
+  it should "support ObjectIds" in {
+    val id = ObjectId.get
+    val q: MongoDBObject = mq"{ clientId : $id }"
+    q should equal(MongoDBObject("clientId" -> id))
   }
 }
