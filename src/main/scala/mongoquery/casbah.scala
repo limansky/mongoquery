@@ -27,13 +27,13 @@ package object casbah {
       c.Expr[DBObject](q"com.mongodb.casbah.commons.MongoDBObject(..$dbparts)")
     }
 
-    def wrapValue[T: WeakTypeTag](value: T): c.Expr[Any] = value match {
+    def wrapValue(value: Any): c.Expr[Any] = value match {
       case Placeholder => a.next()
       case Object(m) => wrapObject(m)
       case a: List[_] =>
         val wrapped = a.map(i => wrapValue(i))
         c.Expr[List[Any]](q"List(..$wrapped)")
-      case v => c.Expr[T](Literal(Constant(v)))
+      case v => c.Expr[Any](Literal(Constant(v)))
     }
 
     val Apply(_, List(Apply(_, partsTrees))) = c.prefix.tree
