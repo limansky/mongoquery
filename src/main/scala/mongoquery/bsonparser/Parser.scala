@@ -3,9 +3,12 @@ package mongoquery.bsonparser
 import scala.util.parsing.combinator.syntactical.StdTokenParsers
 import scala.util.parsing.input.CharArrayReader
 
-trait Parser[IdType, ObjectType] extends StdTokenParsers {
+trait Parser[IdType] extends StdTokenParsers {
 
   override type Tokens = BSONTokens
+
+  case object Placeholder
+  case class Object(membes: List[(String, Any)])
 
   override val lexical = new Lexical
   lexical.delimiters ++= List("[", "]", "{", "}", ":", ",", "(", ")")
@@ -17,14 +20,11 @@ trait Parser[IdType, ObjectType] extends StdTokenParsers {
 
   def makeId(id: String): IdType
 
-  def makeObject(content: List[(String, Any)]): ObjectType
-
   def value: Parser[Any] = id | stringLit | int | double | array | obj
 
   def anyKeyword: Parser[String] = elem("keyword", _.isInstanceOf[Keyword]) ^^ (_.chars)
 
-  def variable: Parser[Any] = elem("var", _.isInstanceOf[Variable]) ^^ (
-    v => v.asInstanceOf[Variable].v)
+  def variable = elem("var", _.isInstanceOf[Variable]) ^^^ Placeholder
 
   def int: Parser[Int] = numericLit ^^ (_.toInt)
 
@@ -40,18 +40,18 @@ trait Parser[IdType, ObjectType] extends StdTokenParsers {
     case i ~ _ ~ v => (i, v)
   }
 
-  def obj: Parser[ObjectType] = "{" ~> repsep(member, ",") <~ "}" ^^ makeObject
+  def obj: Parser[Object] = "{" ~> repsep(member, ",") <~ "}" ^^ Object
 
-  def parse(expr: String): ObjectType = {
+  def parse(expr: String): Object = {
     phrase(obj)(new lexical.Scanner(expr)) match {
       case Success(r, _) => r
       case NoSuccess(m, _) => throw new IllegalArgumentException(m)
     }
   }
 
-  def parse(parts: List[String], args: Seq[Any]): ObjectType = {
+  def parse(parts: List[String]): Object = {
     val rs = parts.map(p => new CharArrayReader(p.toCharArray))
-    phrase(obj)(new lexical.Scanner(rs, args)) match {
+    phrase(obj)(new lexical.Scanner(rs)) match {
       case Success(r, _) => r
       case NoSuccess(m, _) => throw new IllegalArgumentException(m)
     }

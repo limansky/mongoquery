@@ -18,15 +18,15 @@ class Lexical extends StdLexical with BSONTokens {
 
   def wrapQuotes[T](p: Parser[T]): Parser[T] = ('"' ~> p <~ '"') | ('\'' ~> p <~ '\'')
 
-  class Scanner(s: super.Scanner, readers: List[Reader[Char]], args: Seq[Any]) extends Reader[Token] { // super.Scanner(in) {
+  class Scanner(s: super.Scanner, readers: List[Reader[Char]]) extends Reader[Token] {
 
-    def this(readers: List[Reader[Char]], args: Seq[Any]) = this(new super.Scanner(readers.head), readers.tail, args)
+    def this(readers: List[Reader[Char]]) = this(new super.Scanner(readers.head), readers.tail)
 
-    def this(in: String) = this(new super.Scanner(in), Nil, Nil)
+    def this(in: String) = this(new super.Scanner(in), Nil)
 
     override def first = {
       if (s.atEnd && readers.nonEmpty) {
-        Variable(args.head)
+        Variable()
       } else {
         s.first
       }
@@ -34,9 +34,9 @@ class Lexical extends StdLexical with BSONTokens {
 
     override def rest = {
       if (s.atEnd && readers.nonEmpty) {
-        new Scanner(new Lexical.super.Scanner(readers.head), readers.tail, args.tail)
+        new Scanner(new Lexical.super.Scanner(readers.head), readers.tail)
       } else {
-        new Scanner(s.rest, readers, args)
+        new Scanner(s.rest, readers)
       }
     }
 

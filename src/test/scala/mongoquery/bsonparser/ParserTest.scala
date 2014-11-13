@@ -6,13 +6,12 @@ import org.scalatest.Matchers
 class ParserTest extends FlatSpec with Matchers {
 
   case class TestId(id: String)
-  case class TestObject(data: Map[String, Any])
 
-  object TestParser extends Parser[TestId, TestObject] {
+  object TestParser extends Parser[TestId] {
     override def makeId(id: String) = TestId(id)
-
-    override def makeObject(content: List[(String, Any)]) = TestObject(content.toMap)
   }
+
+  import TestParser.Object
 
   def parseValue(s: String): Any = {
     TestParser.phrase(TestParser.value)(new TestParser.lexical.Scanner(s)) match {
@@ -49,20 +48,20 @@ class ParserTest extends FlatSpec with Matchers {
 
   it should "parse objects" in {
     TestParser.parse("{a : 1, b : 2}") should be(
-      TestObject(Map("a" -> 1, "b" -> 2)))
+      Object(List("a" -> 1, "b" -> 2)))
   }
 
   it should "parse nested arrays" in {
     TestParser.parse("{ c: [1,2,3]}") should be(
-      TestObject(Map("c" -> List(1, 2, 3))))
+      Object(List("c" -> List(1, 2, 3))))
   }
 
   it should "parse nested objects" in {
     TestParser.parse("{ d: { e : \"ooo\" }}") should be(
-      TestObject(Map("d" -> TestObject(Map("e" -> "ooo")))))
+      Object(List("d" -> Object(List("e" -> "ooo")))))
   }
 
   it should "process special operators" in {
-    TestParser.parse("{ $lt : 11 }") should be(TestObject(Map("$lt" -> 11)))
+    TestParser.parse("{ $lt : 11 }") should be(Object(List("$lt" -> 11)))
   }
 }
