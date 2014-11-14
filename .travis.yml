@@ -1,0 +1,13 @@
+language: scala
+scala:
+  - 2.11.4
+branches:
+  only:
+    - master
+notifications:
+  email:
+    recipients:
+      - mike.limansky@gmail.com
+jdk:
+  - openjdk7
+  - oraclejdk7

@@ -25,3 +25,6 @@ def findByName(name: String) = {
 }
 
 ```
+
+  Current development build status:
+  [![Build Status](https://travis-ci.org/limansky/mongoquery.svg?branch=master)](https://travis-ci.org/limansky/mongoquery)
