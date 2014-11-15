@@ -14,57 +14,56 @@
  * limitations under the License.
  */
 
-package com.github.limansky.mongoquery.casbah
+package com.github.limansky.mongoquery.reactive
 
 import org.scalatest.FlatSpec
-import com.mongodb.casbah.Imports._
 import org.scalatest.Matchers
-import org.bson.types.ObjectId
+import reactivemongo.bson.BSONDocument
+import reactivemongo.bson.BSONObjectID
 
-class CasbahHelperTest extends FlatSpec with Matchers {
+class ReactiveHelperTest extends FlatSpec with Matchers {
 
-  "CasbahHelper" should "convert string into MongoDBObject" in {
-
+  "ReactiveHelper" should "convert string into BSONDocument" in {
     val q = mq"{ amount : { $$lte : 15}}"
-    q should equal(MongoDBObject("amount" -> MongoDBObject("$lte" -> 15)))
+    q should equal(BSONDocument("amount" -> BSONDocument("$lte" -> 15)))
   }
 
   it should "substitute primitive values in the query" in {
     val id = "15B-4"
     val q = mq"{ orderId : $id }"
-    q should equal(MongoDBObject("orderId" -> id))
+    q should equal(BSONDocument("orderId" -> id))
   }
 
   it should "support nested objects" in {
     val q = mq"""{ user : "Joe", age : {$$gt : 25}}"""
-    q should equal(MongoDBObject("user" -> "Joe", "age" -> MongoDBObject("$gt" -> 25)))
+    q should equal(BSONDocument("user" -> "Joe", "age" -> BSONDocument("$gt" -> 25)))
   }
 
   it should "substitute sequences as arrays in the query" in {
     val colors = List("red", "green", "blue")
     val q = mq"{ color : {$$in : $colors}}"
-    q should equal(MongoDBObject("color" -> MongoDBObject("$in" -> colors)))
+    q should equal(BSONDocument("color" -> BSONDocument("$in" -> colors)))
   }
 
   it should "support arrays of objects" in {
     val q = mq"""{ phones : [ { number : "223322", type : "home"}, { number: "332233", type: "work"} ] }"""
-    q should equal(MongoDBObject("phones" -> List(MongoDBObject("number" -> "223322", "type" -> "home"), MongoDBObject("number" -> "332233", "type" -> "work"))))
+    q should equal(BSONDocument("phones" -> List(BSONDocument("number" -> "223322", "type" -> "home"), BSONDocument("number" -> "332233", "type" -> "work"))))
   }
 
   it should "support arrays of arrays" in {
     val q = mq"""{ indexes : [ [1,3,5], [4,6,7]] }"""
-    q should equal(MongoDBObject("indexes" -> List(List(1, 3, 5), List(4, 6, 7))))
+    q should equal(BSONDocument("indexes" -> List(List(1, 3, 5), List(4, 6, 7))))
   }
 
   it should "be possible to compose queries" in {
     val sub = mq"{$$gt : 10}"
     val q = mq"{price : $sub}"
-    q should equal(MongoDBObject("price" -> MongoDBObject("$gt" -> 10)))
+    q should equal(BSONDocument("price" -> BSONDocument("$gt" -> 10)))
   }
 
-  it should "support BSONObjectIDs" in {
-    val id = ObjectId.get
+  it should "support ObjectIds" in {
+    val id = BSONObjectID.generate
     val q = mq"{ clientId : $id }"
-    q should equal(MongoDBObject("clientId" -> id))
+    q should equal(BSONDocument("clientId" -> id))
   }
 }
