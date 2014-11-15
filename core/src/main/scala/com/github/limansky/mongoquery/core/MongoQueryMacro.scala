@@ -4,7 +4,7 @@ import MacroContext.Context
 
 trait MongoQueryMacro {
 
-  protected def createObject(c: Context)(dbparts: List[(String, c.Tree)]): c.Tree
+  protected def createObject(c: Context)(dbparts: List[(String, c.Expr[Any])]): c.Expr[DBType]
 
   type DBType
   type Parser <: bsonparser.Parser[_]
@@ -18,10 +18,10 @@ trait MongoQueryMacro {
 
     def wrapObject(parts: List[(String, Any)]): c.Expr[DBType] = {
       val dbparts = parts.map {
-        case (i, v) => (i, wrapValue(v).tree)
+        case (i, v) => (i, wrapValue(v))
       }
 
-      c.Expr[DBType](createObject(c)(dbparts))
+      createObject(c)(dbparts)
     }
 
     def wrapValue(value: Any): c.Expr[Any] = value match {

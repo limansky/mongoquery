@@ -11,4 +11,15 @@ libraryDependencies ++= Seq(
   "org.scalatest"           %% "scalatest"                  % "2.2.1"       % "test"
 )
 
+libraryDependencies <++= scalaVersion { sv =>
+  CrossVersion.partialVersion(sv) match {
+    case Some((2, 11)) => Seq()
+    case Some((2, 10)) => Seq(
+      compilerPlugin("org.scalamacros" % "paradise" % "2.0.1" cross CrossVersion.full),
+      "org.scalamacros" %% "quasiquotes" % "2.0.1"
+    )
+    case _ => error("Unsupported Scala version")
+  }
+}
+
 scalariformSettings

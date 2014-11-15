@@ -13,9 +13,9 @@ object CasbahMacro extends MongoQueryMacro {
 
   def c_mqimpl(c: Context)(args: c.Expr[Any]*): c.Expr[DBObject] = mqimpl(c)(args: _*)
 
-  override def createObject(c: Context)(dbparts: List[(String, c.Tree)]): c.Tree = {
+  override def createObject(c: Context)(dbparts: List[(String, c.Expr[Any])]): c.Expr[DBObject] = {
     import c.universe._
 
-    q"com.mongodb.casbah.commons.MongoDBObject(..$dbparts)"
+    c.Expr(q"com.mongodb.casbah.commons.MongoDBObject(..$dbparts)")
   }
 }

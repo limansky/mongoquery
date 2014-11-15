@@ -4,5 +4,7 @@ object Common {
 
   val scalaVersion = "2.11.4"
 
+  val crossScalaVersions = Seq("2.10.4")
+
   def scalacOptions = Seq("-deprecation", "-unchecked", "-feature")
 }
