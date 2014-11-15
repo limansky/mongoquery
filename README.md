@@ -18,7 +18,7 @@ In current version it is possible to convert String to `MongoDBObject` using
 string interpolator `mq`.
 
 ```Scala
-import mongoquery.casbah._
+import com.github.limansky.mongoquery.casbah._
 
 def findByName(name: String) = {
   myCollection.find(mq"""{ name : $name}""")

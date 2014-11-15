@@ -1,14 +1,14 @@
-package mongoquery
+package com.github.limansky.mongoquery
 
 import com.mongodb.casbah.commons.MongoDBObject
-import mongoquery.bsonparser.Parser
 import scala.language.experimental.macros
 import scala.reflect.macros.blackbox.Context
 import com.mongodb.DBObject
-import CasbahParser._
 import org.bson.types.ObjectId
 
 package object casbah {
+
+  import casbah.CasbahParser._
 
   implicit class MongoQueryHelper(val sc: StringContext) extends AnyVal {
     def mq(args: Any*): DBObject = macro mqimpl

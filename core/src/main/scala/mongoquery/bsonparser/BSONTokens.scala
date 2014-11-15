@@ -1,4 +1,4 @@
-package mongoquery.bsonparser
+package com.github.limansky.mongoquery.core.bsonparser
 
 import scala.util.parsing.combinator.token.StdTokens
 

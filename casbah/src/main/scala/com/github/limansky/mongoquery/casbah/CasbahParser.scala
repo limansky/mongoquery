@@ -1,6 +1,6 @@
-package mongoquery
+package com.github.limansky.mongoquery.casbah
 
-import mongoquery.bsonparser.Parser
+import com.github.limansky.mongoquery.core.bsonparser.Parser
 import com.mongodb.casbah.commons.MongoDBObject
 import org.bson.types.ObjectId
 import com.mongodb.DBObject

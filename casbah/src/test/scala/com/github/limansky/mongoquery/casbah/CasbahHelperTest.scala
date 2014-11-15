@@ -1,6 +1,5 @@
-package mongoquery
+package com.github.limansky.mongoquery.casbah
 
-import casbah._
 import org.scalatest.FlatSpec
 import com.mongodb.casbah.Imports._
 import org.scalatest.Matchers

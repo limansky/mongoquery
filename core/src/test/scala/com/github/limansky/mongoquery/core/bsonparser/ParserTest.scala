@@ -1,4 +1,4 @@
-package mongoquery.bsonparser
+package com.github.limansky.mongoquery.core.bsonparser
 
 import org.scalatest.FlatSpec
 import org.scalatest.Matchers
