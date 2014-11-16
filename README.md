@@ -2,6 +2,7 @@ MongoQuery
 ----------
 
 [![Build Status](https://travis-ci.org/limansky/mongoquery.svg?branch=master)](https://travis-ci.org/limansky/mongoquery)
+[![Coverage Status](https://coveralls.io/repos/limansky/mongoquery/badge.png)](https://coveralls.io/r/limansky/mongoquery)
 
 MongoDB is a macro based query builder for Scala.
 

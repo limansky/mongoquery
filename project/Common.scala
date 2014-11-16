@@ -2,6 +2,9 @@ import sbt._
 import sbt.Keys._
 
 object Common {
+  import scoverage.ScoverageSbtPlugin.instrumentSettings
+  import org.scoverage.coveralls.CoverallsPlugin.coverallsSettings
+
   val settings = Seq(
     version := "0.2-SNAPSHOT",
     scalaVersion := "2.11.4",
@@ -14,14 +17,14 @@ object Common {
           compilerPlugin("org.scalamacros" % "paradise" % "2.0.1" cross CrossVersion.full),
           "org.scalamacros" %% "quasiquotes" % "2.0.1"
         )
-        case _ => error("Unsupported Scala version")
+        case _ => sys.error("Unsupported Scala version")
       }
     },
     libraryDependencies ++= Seq(
       "org.scala-lang"  %  "scala-reflect"  % scalaVersion.value,
       "org.scalatest"   %% "scalatest"      % "2.2.2"             % "test"
     )
-  )
+  ) ++ instrumentSettings ++ coverallsSettings
 }
 
 object Publish {
