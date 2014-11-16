@@ -35,8 +35,6 @@ collection.
 })
 ```
 
-Current development build status:
-
 [MongoDB]: http://www.mongodb.org/
 [Casbah]: https://github.com/mongodb/casbah
 [ReactiveMongo]: http://reactivemongo.org/

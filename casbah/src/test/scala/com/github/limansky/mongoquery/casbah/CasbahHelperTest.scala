@@ -62,7 +62,7 @@ class CasbahHelperTest extends FlatSpec with Matchers {
     q should equal(MongoDBObject("price" -> MongoDBObject("$gt" -> 10)))
   }
 
-  it should "support BSONObjectIDs" in {
+  it should "support ObjectIds" in {
     val id = ObjectId.get
     val q = mq"{ clientId : $id }"
     q should equal(MongoDBObject("clientId" -> id))

@@ -61,7 +61,7 @@ class ReactiveHelperTest extends FlatSpec with Matchers {
     q should equal(BSONDocument("price" -> BSONDocument("$gt" -> 10)))
   }
 
-  it should "support ObjectIds" in {
+  it should "support BSONObjectIDs injection" in {
     val id = BSONObjectID.generate
     val q = mq"{ clientId : $id }"
     q should equal(BSONDocument("clientId" -> id))
