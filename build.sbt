@@ -1,4 +1,4 @@
-lazy val root = project in file(".") aggregate(core, casbah, reactivemongo)
+lazy val root = project in file(".") aggregate(core, casbah, reactivemongo) settings( publish := {}, publishLocal := {} )
 
 lazy val core = project in file("core")
 

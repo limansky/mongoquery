@@ -32,6 +32,7 @@ object Publish {
     licenses += ("Apache 2.0 License", url("http://www.apache.org/licenses/LICENSE-2.0")),
     publishMavenStyle := true,
     publishArtifact in Test := false,
+    organization := "com.github.limansky",
     scmInfo := Some(
       ScmInfo(
         url("https://github.com/limansky/mongoquery"),
