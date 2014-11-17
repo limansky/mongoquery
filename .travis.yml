@@ -13,4 +13,5 @@ jdk:
   - openjdk7
   - oraclejdk7
 
-script: "sbt coveralls"
+# This lead to random fails on uploading.
+# script: "sbt coveralls"
