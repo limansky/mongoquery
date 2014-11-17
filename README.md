@@ -13,6 +13,9 @@ study new syntax, instead of using MongoDB queries.  The purpose of this
 project is to provide a simple API for creating queries from strings.  The
 goal is to make compile time queries syntax checking (as much as possible).
 
+How to use
+==========
+
 The `mq` string interpolator converts string to the BSON objects. If you use
 [Casbah][] it creates `DBObjects`:
 
@@ -34,6 +37,31 @@ collection.
   enumerate().apply(Iteratee.foreach { doc =>
   println("found document: " + BSONDocument.pretty(doc))
 })
+```
+
+Since the query is defined inside of the string interpolator, the words started
+with `$` are handled as variable references.  To type MongoDB keyword use `$$`, e.g:
+
+```Scala
+def makeOlder(age: Int) = {
+  people.update(mq"""{ age : { $$lt : $age } }""", mq"""{ $$inc : { age : 1 }}""", multi = 1)
+}
+```
+
+Installation
+============
+
+MongoQuery is published to Sonatype maven repository.  To use with casbah add the
+module to `libraryDependencies` in sbt build file:
+
+```
+"com.github.limansky" %% "mongoquery-casbah" % "0.2-SNAPSHOT"
+```
+
+ReactiveMongo users need to add:
+
+```
+"com.github.limansky" %% "mongoquery-reactive" % "0.2-SNAPSHOT"
 ```
 
 [MongoDB]: http://www.mongodb.org/
