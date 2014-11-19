@@ -23,15 +23,16 @@ import reactivemongo.bson.BSONDocument
 object ReactiveMacro extends MongoQueryMacro {
 
   type DBType = BSONDocument
-  type Parser = ReactiveParser
-
-  override object parser extends ReactiveParser
 
   def r_mqimpl(c: Context)(args: c.Expr[Any]*): c.Expr[BSONDocument] = mqimpl(c)(args: _*)
 
   override def createObject(c: Context)(dbparts: List[(String, c.Expr[Any])]): c.Expr[BSONDocument] = {
     import c.universe._
-
     c.Expr(q"reactivemongo.bson.BSONDocument(..$dbparts)")
+  }
+
+  override def createId(c: Context)(id: String): c.Expr[Any] = {
+    import c.universe._
+    c.Expr(q"reactivemongo.bson.BSONObjectID($id)")
   }
 }

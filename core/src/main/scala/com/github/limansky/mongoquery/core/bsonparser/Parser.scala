@@ -19,12 +19,14 @@ package com.github.limansky.mongoquery.core.bsonparser
 import scala.util.parsing.combinator.syntactical.StdTokenParsers
 import scala.util.parsing.input.CharArrayReader
 
-trait Parser[IdType] extends StdTokenParsers {
+trait Parser extends StdTokenParsers {
 
   override type Tokens = BSONTokens
 
   case object Placeholder
   case class Object(membes: List[(String, Any)])
+  case class Id(id: String)
+  case class DateTime(l: Long)
 
   override val lexical = new Lexical
   lexical.delimiters ++= List("[", "]", "{", "}", ":", ",", "(", ")")
@@ -33,8 +35,6 @@ trait Parser[IdType] extends StdTokenParsers {
   val hexDigits = Set[Char]() ++ "0123456789abcdefABCDEF".toArray
 
   import lexical._
-
-  def makeId(id: String): IdType
 
   def value: Parser[Any] = id | stringLit | int | double | array | obj
 
@@ -48,7 +48,7 @@ trait Parser[IdType] extends StdTokenParsers {
 
   def objectIdValue = acceptIf(t => t.isInstanceOf[StringLit] && t.chars.length() == 24 && t.chars.forall(hexDigits.contains))(t => "Invalid object id: " + t.chars) ^^ (v => v.chars)
 
-  def id: Parser[IdType] = keyword("ObjectId") ~> "(" ~> objectIdValue <~ ")" ^^ makeId
+  def id: Parser[Id] = keyword("ObjectId") ~> "(" ~> objectIdValue <~ ")" ^^ Id
 
   def array: Parser[List[Any]] = ("[" ~> repsep(value, ",") <~ "]")
 

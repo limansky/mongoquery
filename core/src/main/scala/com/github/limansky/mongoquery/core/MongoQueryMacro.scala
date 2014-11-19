@@ -17,15 +17,17 @@
 package com.github.limansky.mongoquery.core
 
 import MacroContext.Context
+import bsonparser.Parser
 
 trait MongoQueryMacro {
 
   protected def createObject(c: Context)(dbparts: List[(String, c.Expr[Any])]): c.Expr[DBType]
 
-  type DBType
-  type Parser <: bsonparser.Parser[_]
+  protected def createId(c: Context)(id: String): c.Expr[Any]
 
-  val parser: Parser
+  type DBType
+
+  object parser extends Parser
 
   def mqimpl(c: Context)(args: c.Expr[Any]*): c.Expr[DBType] = {
     import c.universe._
@@ -43,6 +45,7 @@ trait MongoQueryMacro {
     def wrapValue(value: Any): c.Expr[Any] = value match {
       case parser.Placeholder => a.next()
       case parser.Object(m) => wrapObject(m)
+      case parser.Id(id) => createId(c)(id)
       case a: List[_] =>
         val wrapped = a.map(i => wrapValue(i))
         c.Expr[List[Any]](q"List(..$wrapped)")

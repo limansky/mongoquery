@@ -21,11 +21,7 @@ import org.scalatest.Matchers
 
 class ParserTest extends FlatSpec with Matchers {
 
-  case class TestId(id: String)
-
-  object TestParser extends Parser[TestId] {
-    override def makeId(id: String) = TestId(id)
-  }
+  object TestParser extends Parser
 
   import TestParser.Object
 
@@ -50,7 +46,7 @@ class ParserTest extends FlatSpec with Matchers {
   }
 
   it should "parse objectId values" in {
-    parseValue("ObjectId(\"0123456789abcdef01234567\")") should be(TestId("0123456789abcdef01234567"))
+    parseValue("ObjectId(\"0123456789abcdef01234567\")") should be(TestParser.Id("0123456789abcdef01234567"))
   }
 
   it should "not allow invalid ObjectIds" in {
