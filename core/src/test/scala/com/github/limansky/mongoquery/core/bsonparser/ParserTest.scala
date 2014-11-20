@@ -76,4 +76,14 @@ class ParserTest extends FlatSpec with Matchers {
   it should "process special operators" in {
     TestParser.parse("{ $lt : 11 }") should be(Object(List("$lt" -> 11)))
   }
+
+  it should "allow access to inner fields" in {
+    TestParser.parse("{ employee.name : \"John\" }") should be(Object(List("employee.name" -> "John")))
+    TestParser.parse("{ user.address.building : \"10\" }") should be(Object(List("user.address.building" -> "10")))
+  }
+
+  it should "allow access to array item" in {
+    TestParser.parse("{ clients.3 : 5 }") should be(Object(List("clients.3" -> 5)))
+    TestParser.parse("{ clients.$.size : { $gt : 100 }}") should be(Object(List("clients.$.size" -> Object(List("$gt" -> 100)))))
+  }
 }

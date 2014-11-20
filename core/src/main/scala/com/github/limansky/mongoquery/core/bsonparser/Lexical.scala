@@ -26,11 +26,18 @@ class Lexical extends StdLexical with BSONTokens {
 
   override def token = (
     rep1(digit) ~ '.' ~ rep1(digit) ^^ { case xs ~ '.' ~ ys => DoubleLit((xs ::: '.' :: ys).mkString) }
-    | ('$' ~> ident) ^^ { case x ~ xs => Keyword('$' :: x :: xs mkString "") }
+    | keyword ^^ { case x ~ xs => Keyword(x :: xs mkString "") }
+    | ident ^^ processIdent
     | super.token
   )
 
-  def ident = identChar ~ rep(identChar | digit)
+  def keyword = '$' ~ rep(letter)
+
+  def ident = field ~ rep('.' ~> (field | index)) ^^ { case p ~ c => p :: c mkString "." }
+
+  def index = ('$' ^^^ "$") | (rep(digit) ^^ (_.mkString))
+
+  def field = identChar ~ rep(identChar | digit) ^^ { case x ~ xs => (x :: xs).mkString }
 
   def wrapQuotes[T](p: Parser[T]): Parser[T] = ('"' ~> p <~ '"') | ('\'' ~> p <~ '\'')
 

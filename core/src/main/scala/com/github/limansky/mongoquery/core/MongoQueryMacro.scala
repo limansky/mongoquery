@@ -61,6 +61,6 @@ trait MongoQueryMacro {
       case e: IllegalArgumentException => c.abort(c.enclosingPosition, e.getMessage)
     }
 
-    wrapObject(parsed.membes)
+    wrapObject(parsed.members)
   }
 }

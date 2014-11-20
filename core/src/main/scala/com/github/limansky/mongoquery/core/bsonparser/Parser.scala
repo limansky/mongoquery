@@ -24,7 +24,7 @@ trait Parser extends StdTokenParsers {
   override type Tokens = BSONTokens
 
   case object Placeholder
-  case class Object(membes: List[(String, Any)])
+  case class Object(members: List[(String, Any)])
   case class Id(id: String)
   case class DateTime(l: Long)
 
