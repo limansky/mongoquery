@@ -1,10 +1,10 @@
 MongoQuery
-----------
+==========
 
 [![Build Status](https://travis-ci.org/limansky/mongoquery.svg?branch=master)](https://travis-ci.org/limansky/mongoquery)
 [![Coverage Status](https://coveralls.io/repos/limansky/mongoquery/badge.png)](https://coveralls.io/r/limansky/mongoquery)
 
-MongoDB is a macro based query builder for Scala.
+MongoQuery is a macro based MongoDB query builder for Scala.
 
 Currently the [MongoDB][] queries API requires to construct DBObjects explicitly.
 This makes even simple queries bulky.  Even though you are using Casbah DSL
@@ -14,7 +14,7 @@ project is to provide a simple API for creating queries from strings.  The
 goal is to make compile time queries syntax checking (as much as possible).
 
 How to use
-==========
+----------
 
 The `mq` string interpolator converts string to the BSON objects. If you use
 [Casbah][] it creates `DBObjects`:
@@ -44,12 +44,14 @@ with `$` are handled as variable references.  To type MongoDB keyword use `$$`, 
 
 ```Scala
 def makeOlder(age: Int) = {
-  people.update(mq"""{ age : { $$lt : $age } }""", mq"""{ $$inc : { age : 1 }}""", multi = 1)
+  people.update(mq"""{ age : { $$lt : $age } }""",
+                mq"""{ $$inc : { age : 1 }}""",
+                multi = 1)
 }
 ```
 
 Installation
-============
+------------
 
 MongoQuery is published to Sonatype maven repository.  To use with casbah add the
 module to `libraryDependencies` in sbt build file:

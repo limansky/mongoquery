@@ -41,8 +41,16 @@ class ParserTest extends FlatSpec with Matchers {
     parseValue("42") should be(42)
   }
 
+  it should "support negative integers" in {
+    parseValue("-5") should be(-5)
+  }
+
   it should "parse double values" in {
     parseValue("42.5") should be(42.5)
+  }
+
+  it should "parse negative doubles" in {
+    parseValue("-8.33") should be(-8.33)
   }
 
   it should "parse objectId values" in {

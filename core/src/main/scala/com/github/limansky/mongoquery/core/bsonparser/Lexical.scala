@@ -25,7 +25,8 @@ class Lexical extends StdLexical with BSONTokens {
   override def whitespace = rep(whitespaceChar)
 
   override def token = (
-    rep1(digit) ~ '.' ~ rep1(digit) ^^ { case xs ~ '.' ~ ys => DoubleLit((xs ::: '.' :: ys).mkString) }
+    opt('-') ~ rep1(digit) ~ '.' ~ rep1(digit) ^^ { case sign ~ xs ~ '.' ~ ys => DoubleLit((sign.toList ::: xs ::: '.' :: ys).mkString) }
+    | '-' ~> rep1(digit) ^^ { case ds => NumericLit('-' :: ds mkString "") }
     | keyword ^^ { case x ~ xs => Keyword(x :: xs mkString "") }
     | ident ^^ processIdent
     | super.token
