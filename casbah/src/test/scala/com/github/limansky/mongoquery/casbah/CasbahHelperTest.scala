@@ -24,9 +24,7 @@ import org.bson.types.ObjectId
 class CasbahHelperTest extends FlatSpec with Matchers {
 
   "CasbahHelper" should "convert string into MongoDBObject" in {
-
-    val q = mq"{ amount : { $$lte : 15}}"
-    q should equal(MongoDBObject("amount" -> MongoDBObject("$lte" -> 15)))
+    mq"{ amount : { $$lte : 15}}" should equal(MongoDBObject("amount" -> MongoDBObject("$lte" -> 15)))
   }
 
   it should "substitute primitive values in the query" in {

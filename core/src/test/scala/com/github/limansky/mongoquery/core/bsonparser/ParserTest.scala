@@ -32,6 +32,13 @@ class ParserTest extends FlatSpec with Matchers {
     }
   }
 
+  def parse(s: String): TestParser.Object = {
+    TestParser.parse(s) match {
+      case TestParser.Success(r, _) => r
+      case TestParser.NoSuccess(m, _) => throw new IllegalArgumentException(m)
+    }
+  }
+
   "BSON Parser" should "parse string values" in {
     parseValue("\"It's a string\"") should be("It's a string")
     parseValue("'a string'") should be("a string")
@@ -67,35 +74,36 @@ class ParserTest extends FlatSpec with Matchers {
   }
 
   it should "parse objects" in {
-    TestParser.parse("{a : 1, b : 2}") should be(
-      Object(List("a" -> 1, "b" -> 2)))
+    parse("{a : 1, b : 2}") should be(Object(List("a" -> 1, "b" -> 2)))
+  }
+
+  it should "parse empty object" in {
+    parse("{}") should be(Object(Nil))
   }
 
   it should "parse nested arrays" in {
-    TestParser.parse("{ c: [1,2,3]}") should be(
-      Object(List("c" -> List(1, 2, 3))))
+    parse("{ c: [1,2,3]}") should be(Object(List("c" -> List(1, 2, 3))))
   }
 
   it should "parse nested objects" in {
-    TestParser.parse("{ d: { e : \"ooo\" }}") should be(
-      Object(List("d" -> Object(List("e" -> "ooo")))))
+    parse("{ d: { e : \"ooo\" }}") should be(Object(List("d" -> Object(List("e" -> "ooo")))))
   }
 
   it should "process special operators" in {
-    TestParser.parse("{ $lt : 11 }") should be(Object(List("$lt" -> 11)))
+    parse("{ $lt : 11 }") should be(Object(List("$lt" -> 11)))
   }
 
   it should "allow access to inner fields" in {
-    TestParser.parse("{ employee.name : \"John\" }") should be(Object(List("employee.name" -> "John")))
-    TestParser.parse("{ user.address.building : \"10\" }") should be(Object(List("user.address.building" -> "10")))
+    parse("{ employee.name : \"John\" }") should be(Object(List("employee.name" -> "John")))
+    parse("{ user.address.building : \"10\" }") should be(Object(List("user.address.building" -> "10")))
   }
 
   it should "allow access to array item" in {
-    TestParser.parse("{ clients.3 : 5 }") should be(Object(List("clients.3" -> 5)))
-    TestParser.parse("{ clients.$.size : { $gt : 100 }}") should be(Object(List("clients.$.size" -> Object(List("$gt" -> 100)))))
+    parse("{ clients.3 : 5 }") should be(Object(List("clients.3" -> 5)))
+    parse("{ clients.$.size : { $gt : 100 }}") should be(Object(List("clients.$.size" -> Object(List("$gt" -> 100)))))
   }
 
   it should "be possible to use boolean literals" in {
-    TestParser.parse("{ foo: true, bar: false }") should be(Object(List("foo" -> true, "bar" -> false)))
+    parse("{ foo: true, bar: false }") should be(Object(List("foo" -> true, "bar" -> false)))
   }
 }

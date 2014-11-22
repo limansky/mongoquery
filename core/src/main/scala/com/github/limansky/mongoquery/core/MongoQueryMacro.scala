@@ -54,11 +54,18 @@ trait MongoQueryMacro {
 
     val Apply(_, List(Apply(_, partsTrees))) = c.prefix.tree
     val parts = partsTrees map { case Literal(Constant(s: String)) => s }
+    val positions = partsTrees.map(_.pos).toArray
 
-    val parsed = try {
-      parser.parse(parts)
-    } catch {
-      case e: IllegalArgumentException => c.abort(c.enclosingPosition, e.getMessage)
+    val parsed = parser.parse(parts) match {
+      case parser.Success(obj, _) => obj
+      case parser.NoSuccess(msg, r) =>
+        val partIndex = if (r.isInstanceOf[parser.lexical.Scanner]) {
+          r.asInstanceOf[parser.lexical.Scanner].part
+        } else {
+          0
+        }
+        val part = positions(partIndex)
+        c.abort(part.withPoint(part.point + r.offset), msg)
     }
 
     wrapObject(parsed.members)
