@@ -72,4 +72,8 @@ class CasbahHelperTest extends FlatSpec with Matchers {
     val q = mq"""{employeeId : ObjectId("00112233445566778899aabb")}"""
     q should equal(MongoDBObject("employeeId" -> new ObjectId("00112233445566778899aabb")))
   }
+
+  it should "support Boolean literals" in {
+    mq"{foo : false}" should equal(MongoDBObject("foo" -> false))
+  }
 }

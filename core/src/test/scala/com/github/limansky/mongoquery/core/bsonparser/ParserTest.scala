@@ -94,4 +94,8 @@ class ParserTest extends FlatSpec with Matchers {
     TestParser.parse("{ clients.3 : 5 }") should be(Object(List("clients.3" -> 5)))
     TestParser.parse("{ clients.$.size : { $gt : 100 }}") should be(Object(List("clients.$.size" -> Object(List("$gt" -> 100)))))
   }
+
+  it should "be possible to use boolean literals" in {
+    TestParser.parse("{ foo: true, bar: false }") should be(Object(List("foo" -> true, "bar" -> false)))
+  }
 }
