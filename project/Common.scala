@@ -6,7 +6,7 @@ object Common {
   import org.scoverage.coveralls.CoverallsPlugin.coverallsSettings
 
   val settings = Seq(
-    version := "0.2-SNAPSHOT",
+    version := "0.2",
     scalaVersion := "2.11.4",
     crossScalaVersions := Seq("2.11.4", "2.10.4"),
     scalacOptions ++= Seq("-deprecation", "-unchecked", "-feature"),

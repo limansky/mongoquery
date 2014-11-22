@@ -57,15 +57,21 @@ MongoQuery is published to Sonatype maven repository.  To use with casbah add th
 module to `libraryDependencies` in sbt build file:
 
 ```
-"com.github.limansky" %% "mongoquery-casbah" % "0.2-SNAPSHOT"
+"com.github.limansky" %% "mongoquery-casbah" % "0.2"
 ```
 
 ReactiveMongo users need to add:
 
 ```
-"com.github.limansky" %% "mongoquery-reactive" % "0.2-SNAPSHOT"
+"com.github.limansky" %% "mongoquery-reactive" % "0.2"
 ```
+
+Feedback
+--------
+
+Any feedback is very welcome!  You can ask any questions in [MongoQuery mailing list][maillist].
 
 [MongoDB]: http://www.mongodb.org/
 [Casbah]: https://github.com/mongodb/casbah
 [ReactiveMongo]: http://reactivemongo.org/
+[maillist]: https://groups.google.com/forum/#!forum/mongoquery-users
