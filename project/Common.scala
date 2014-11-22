@@ -30,6 +30,7 @@ object Common {
 object Publish {
   val settings = Seq(
     licenses += ("Apache 2.0 License", url("http://www.apache.org/licenses/LICENSE-2.0")),
+    homepage := Some(url("http://github.com/limansky/mongoquery")),
     publishMavenStyle := true,
     publishArtifact in Test := false,
     organization := "com.github.limansky",
