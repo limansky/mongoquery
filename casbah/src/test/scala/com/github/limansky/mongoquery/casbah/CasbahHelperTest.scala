@@ -20,6 +20,7 @@ import org.scalatest.FlatSpec
 import com.mongodb.casbah.Imports._
 import org.scalatest.Matchers
 import org.bson.types.ObjectId
+import java.util.Date
 
 class CasbahHelperTest extends FlatSpec with Matchers {
 
@@ -36,6 +37,11 @@ class CasbahHelperTest extends FlatSpec with Matchers {
   it should "support nested objects" in {
     val q = mq"""{ user : "Joe", age : {$$gt : 25}}"""
     q should equal(MongoDBObject("user" -> "Joe", "age" -> MongoDBObject("$gt" -> 25)))
+  }
+
+  it should "support date references" in {
+    val now = new Date
+    mq"{start : {$$lte : $now}}" should be(MongoDBObject("start" -> MongoDBObject("$lte" -> now)))
   }
 
   it should "substitute sequences as arrays in the query" in {

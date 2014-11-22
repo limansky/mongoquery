@@ -40,7 +40,7 @@ trait Parser extends StdTokenParsers {
 
   def anyKeyword: Parser[String] = elem("keyword", _.isInstanceOf[Keyword]) ^^ (_.chars)
 
-  def variable = elem("var", _ == Variable) ^^^ Placeholder
+  def variable = elem("variable", _ == Variable) ^^^ Placeholder
 
   def int: Parser[Int] = numericLit ^^ (_.toInt)
 

@@ -20,6 +20,8 @@ import org.scalatest.FlatSpec
 import org.scalatest.Matchers
 import reactivemongo.bson.BSONDocument
 import reactivemongo.bson.BSONObjectID
+import java.util.Date
+import reactivemongo.bson.BSONDateTime
 
 class ReactiveHelperTest extends FlatSpec with Matchers {
 
@@ -30,8 +32,7 @@ class ReactiveHelperTest extends FlatSpec with Matchers {
 
   it should "substitute primitive values in the query" in {
     val id = "15B-4"
-    val q = mq"{ orderId : $id }"
-    q should equal(BSONDocument("orderId" -> id))
+    mq"{ orderId : $id }" should equal(BSONDocument("orderId" -> id))
   }
 
   it should "support nested objects" in {
@@ -43,6 +44,11 @@ class ReactiveHelperTest extends FlatSpec with Matchers {
     val colors = List("red", "green", "blue")
     val q = mq"{ color : {$$in : $colors}}"
     q should equal(BSONDocument("color" -> BSONDocument("$in" -> colors)))
+  }
+
+  it should "substitute dates" in {
+    val now = BSONDateTime(new Date().getTime)
+    mq"{start : {$$lte : $now}}" should be(BSONDocument("start" -> BSONDocument("$lte" -> now)))
   }
 
   it should "support arrays of objects" in {
@@ -57,14 +63,12 @@ class ReactiveHelperTest extends FlatSpec with Matchers {
 
   it should "be possible to compose queries" in {
     val sub = mq"{$$gt : 10}"
-    val q = mq"{price : $sub}"
-    q should equal(BSONDocument("price" -> BSONDocument("$gt" -> 10)))
+    mq"{price : $sub}" should equal(BSONDocument("price" -> BSONDocument("$gt" -> 10)))
   }
 
   it should "support BSONObjectIDs injection" in {
     val id = BSONObjectID.generate
-    val q = mq"{ clientId : $id }"
-    q should equal(BSONDocument("clientId" -> id))
+    mq"{ clientId : $id }" should equal(BSONDocument("clientId" -> id))
   }
 
   it should "support BSONObjectIDs literals" in {
