@@ -79,4 +79,8 @@ class ReactiveHelperTest extends FlatSpec with Matchers {
   it should "support boolean literals" in {
     mq"{bar : true}" should equal(BSONDocument("bar" -> true))
   }
+
+  it should "support null" in {
+    mq"{bar : null}" should equal(BSONDocument("bar" -> null))
+  }
 }

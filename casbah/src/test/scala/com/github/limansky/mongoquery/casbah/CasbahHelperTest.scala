@@ -80,4 +80,8 @@ class CasbahHelperTest extends FlatSpec with Matchers {
   it should "support Boolean literals" in {
     mq"{foo : false}" should equal(MongoDBObject("foo" -> false))
   }
+
+  it should "support null" in {
+    mq"{bar : null}" should equal(MongoDBObject("bar" -> null))
+  }
 }

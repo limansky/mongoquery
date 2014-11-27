@@ -30,13 +30,13 @@ trait Parser extends StdTokenParsers {
 
   override val lexical = new Lexical
   lexical.delimiters ++= List("[", "]", "{", "}", ":", ",", "(", ")")
-  lexical.reserved ++= List("ObjectId", "true", "false")
+  lexical.reserved ++= List("ObjectId", "true", "false", "null")
 
   val hexDigits = Set[Char]() ++ "0123456789abcdefABCDEF".toArray
 
   import lexical._
 
-  def value: Parser[Any] = id | stringLit | int | double | boolean | array | obj
+  def value: Parser[Any] = id | stringLit | int | double | boolean | nullLit | array | obj
 
   def anyKeyword: Parser[String] = elem("keyword", _.isInstanceOf[Keyword]) ^^ (_.chars)
 
@@ -49,6 +49,8 @@ trait Parser extends StdTokenParsers {
   def trueLit: Parser[Boolean] = keyword("true") ^^^ true
 
   def falseLit: Parser[Boolean] = keyword("false") ^^^ false
+
+  def nullLit: Parser[Null] = keyword("null") ^^^ null
 
   def double: Parser[Double] = elem("double", _.isInstanceOf[DoubleLit]) ^^ (_.chars.toDouble)
 

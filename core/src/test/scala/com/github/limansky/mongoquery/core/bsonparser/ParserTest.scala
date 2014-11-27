@@ -106,4 +106,8 @@ class ParserTest extends FlatSpec with Matchers {
   it should "be possible to use boolean literals" in {
     parse("{ foo: true, bar: false }") should be(Object(List("foo" -> true, "bar" -> false)))
   }
+
+  it should "be possible to use null literal" in {
+    parse("{ b: null }") should be(Object(List("b" -> null)))
+  }
 }
