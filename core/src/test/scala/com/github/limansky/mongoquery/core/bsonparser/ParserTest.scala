@@ -18,8 +18,9 @@ package com.github.limansky.mongoquery.core.bsonparser
 
 import org.scalatest.FlatSpec
 import org.scalatest.Matchers
+import org.scalatest.prop.GeneratorDrivenPropertyChecks
 
-class ParserTest extends FlatSpec with Matchers {
+class ParserTest extends FlatSpec with Matchers with GeneratorDrivenPropertyChecks {
 
   object TestParser extends Parser
 
@@ -45,19 +46,15 @@ class ParserTest extends FlatSpec with Matchers {
   }
 
   it should "parse int values" in {
-    parseValue("42") should be(42)
-  }
-
-  it should "support negative integers" in {
-    parseValue("-5") should be(-5)
+    forAll { n: Int =>
+      parseValue(n.toString) should be(n)
+    }
   }
 
   it should "parse double values" in {
-    parseValue("42.5") should be(42.5)
-  }
-
-  it should "parse negative doubles" in {
-    parseValue("-8.33") should be(-8.33)
+    forAll { n: Double =>
+      parseValue(n.toString) should be(n)
+    }
   }
 
   it should "parse objectId values" in {

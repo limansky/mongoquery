@@ -11,6 +11,8 @@ libraryDependencies <++= scalaVersion { sv =>
   }
 }
 
+libraryDependencies += "org.scalacheck" %% "scalacheck" % "1.12.0" % "test"
+
 unmanagedSourceDirectories in Compile <+= (scalaBinaryVersion, sourceDirectory in Compile) { (v, d) =>
   d / s"scala_$v"
 }

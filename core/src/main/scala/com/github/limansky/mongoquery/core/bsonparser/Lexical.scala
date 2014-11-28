@@ -25,18 +25,35 @@ class Lexical extends StdLexical with BSONTokens {
   override def whitespace = rep(whitespaceChar)
 
   override def token = (
-    opt('-') ~ rep1(digit) ~ '.' ~ rep1(digit) ^^ { case sign ~ xs ~ '.' ~ ys => DoubleLit((sign.toList ::: xs ::: '.' :: ys).mkString) }
-    | '-' ~> rep1(digit) ^^ { case ds => NumericLit('-' :: ds mkString "") }
+    float ^^ DoubleLit
+    | '-' ~> number ^^ { case n => NumericLit('-' + n) }
     | keyword ^^ { case x ~ xs => Keyword(x :: xs mkString "") }
     | ident ^^ processIdent
     | super.token
   )
 
+  def number = rep1(digit) ^^ (_.mkString)
+
+  def sign = opt(elem('+') | '-') ^^ (_.map(_.toString) getOrElse "")
+
+  def simpleFloat = sign ~ number ~ '.' ~ rep(digit) ^^ {
+    case s ~ xs ~ '.' ~ ys =>
+      s + xs + ('.' :: ys).mkString
+  }
+
+  def expFloat = sign ~ number ~ opt('.' ~> number) ~ (elem('e') | 'E') ~ sign ~ number ^^ {
+    case s ~ n ~ f ~ e ~ es ~ en =>
+      val fl = f map { case n => '.' + n } getOrElse ""
+      s + n + fl + e + es + en
+  }
+
+  def float = expFloat | simpleFloat
+
   def keyword = '$' ~ rep(letter)
 
   def ident = field ~ rep('.' ~> (field | index)) ^^ { case p ~ c => p :: c mkString "." }
 
-  def index = ('$' ^^^ "$") | (rep(digit) ^^ (_.mkString))
+  def index = ('$' ^^^ "$") | number
 
   def field = identChar ~ rep(identChar | digit) ^^ { case x ~ xs => (x :: xs).mkString }
 
