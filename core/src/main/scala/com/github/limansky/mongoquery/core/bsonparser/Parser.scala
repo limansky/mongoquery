@@ -28,9 +28,32 @@ trait Parser extends StdTokenParsers {
   case class Id(id: String)
   case class DateTime(l: Long)
 
+  val queryOperators = Set(
+    "$gt", "$gte", "$lt", "$lte", "$ne", "$in", "$nin", // Compare
+    "$and", "$or", "$nor", "$not", // Logical
+    "$exists", "$type", // Element
+    "$mod", "$regex", "$text", "$where", // Evaluation
+    "$geoIntersects", "$geoWithin", "$nearSphere", "$near", // Geospatial
+    "$all", "$elemMatch", "$size", // Array
+    "$comment", "$meta", "$slice" // Other
+  )
+
+  val updateOperators = Set(
+    "$currentDate", "$inc", "$max", "$min", "$mul", "$rename", "$setOnInsert", "$set", "$unset", //Fields
+    "$addToSet", "$pop", "$push", "$pushAll", "$pull", "$pullAll", // Array
+    "$each", "$position", "$sort", // Modifiers
+    "$bit", "$isolated" // Other
+  )
+
+  val aggregationOperators = Set(
+    "$geoNear", "$group", "$limit", "$match", "$out", "$project", "$redact", "$slip", "$sort", "$unwind",
+    "$addToSet", "$avg", "$first", "$last", "$max", "$min", "$push", "$sum"
+  )
+
   override val lexical = new Lexical
   lexical.delimiters ++= List("[", "]", "{", "}", ":", ",", "(", ")")
   lexical.reserved ++= List("ObjectId", "true", "false", "null")
+  lexical.operators ++= queryOperators ++ updateOperators ++ aggregationOperators
 
   val hexDigits = Set[Char]() ++ "0123456789abcdefABCDEF".toArray
 
@@ -38,7 +61,7 @@ trait Parser extends StdTokenParsers {
 
   def value: Parser[Any] = id | stringLit | int | double | boolean | nullLit | array | obj
 
-  def anyKeyword: Parser[String] = elem("keyword", _.isInstanceOf[Keyword]) ^^ (_.chars)
+  def operator: Parser[String] = elem("operator", _.isInstanceOf[Operator]) ^^ (_.chars)
 
   def variable = elem("variable", _ == Variable) ^^^ Placeholder
 
@@ -60,7 +83,7 @@ trait Parser extends StdTokenParsers {
 
   def array: Parser[List[Any]] = ("[" ~> repsep(value, ",") <~ "]")
 
-  def member: Parser[(String, Any)] = (ident | anyKeyword) ~ ":" ~ (value | variable) ^^ {
+  def member: Parser[(String, Any)] = (ident | operator) ~ ":" ~ (value | variable) ^^ {
     case i ~ _ ~ v => (i, v)
   }
 

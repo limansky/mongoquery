@@ -19,15 +19,18 @@ package com.github.limansky.mongoquery.core.bsonparser
 import scala.util.parsing.combinator.lexical.StdLexical
 import scala.util.parsing.input.Reader
 import scala.util.parsing.input.CharArrayReader
+import scala.collection.mutable
 
 class Lexical extends StdLexical with BSONTokens {
+
+  val operators = new mutable.HashSet[String]
 
   override def whitespace = rep(whitespaceChar)
 
   override def token = (
     float ^^ DoubleLit
     | '-' ~> number ^^ { case n => NumericLit('-' + n) }
-    | keyword ^^ { case x ~ xs => Keyword(x :: xs mkString "") }
+    | knownOperator
     | ident ^^ processIdent
     | super.token
   )
@@ -49,7 +52,14 @@ class Lexical extends StdLexical with BSONTokens {
 
   def float = expFloat | simpleFloat
 
-  def keyword = '$' ~ rep(letter)
+  def operator = '$' ~ rep(letter) ^^ {
+    case x ~ xs =>
+      x :: xs mkString ""
+  }
+
+  def knownOperator = operator ^? ({
+    case o if operators.contains(o) => Operator(o)
+  }, "Unknown operatop: " + _)
 
   def ident = field ~ rep('.' ~> (field | index)) ^^ { case p ~ c => p :: c mkString "." }
 

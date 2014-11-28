@@ -22,6 +22,8 @@ trait BSONTokens extends StdTokens {
 
   case class DoubleLit(chars: String) extends Token
 
+  case class Operator(chars: String) extends Token
+
   case object Variable extends Token {
     def chars = "variable"
   }

@@ -107,4 +107,8 @@ class ParserTest extends FlatSpec with Matchers with GeneratorDrivenPropertyChec
   it should "be possible to use null literal" in {
     parse("{ b: null }") should be(Object(List("b" -> null)))
   }
+
+  it should "fail on unknown operators" in {
+    an[IllegalArgumentException] should be thrownBy (parse("{ $foo : { test : 5 }}"))
+  }
 }
