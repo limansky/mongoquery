@@ -13,19 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.github.limansky.mongoquery.core.bsonparser
 
-import scala.util.parsing.combinator.token.StdTokens
+object Utils {
 
-trait BSONTokens extends StdTokens {
-
-  case class DoubleLit(chars: String) extends Token
-
-  case class Operator(chars: String) extends Token
-
-  case object Variable extends Token {
-    override val chars = "variable"
+  def levenshtein(f: String, s: String): Int = {
+    import math.min
+    s.foldLeft((0 to f.length).toList)((l, a) =>
+      (l, l.tail, f).zipped.toList.scanLeft(l.head + 1) {
+        case (del, (rep, ins, b)) =>
+          val c = if (a == b) 0 else 1
+          min(min(del + 1, ins + 1), rep + c)
+      }
+    ).last
   }
-
 }

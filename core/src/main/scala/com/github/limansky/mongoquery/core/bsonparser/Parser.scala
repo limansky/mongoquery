@@ -89,6 +89,11 @@ trait Parser extends StdTokenParsers {
 
   def obj: Parser[Object] = "{" ~> repsep(member, ",") <~ "}" ^^ Object
 
+  override def accept(e: Elem): Parser[Elem] = acceptIf(_ == e)(_ match {
+    case lexical.ErrorToken(c) => c.stripPrefix("*** error: ")
+    case in => "" + e + " expected, but " + in + " found"
+  })
+
   def parse(expr: String): ParseResult[Object] = {
     phrase(obj)(new lexical.Scanner(expr))
   }

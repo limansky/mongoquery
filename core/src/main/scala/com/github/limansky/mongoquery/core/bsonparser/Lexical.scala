@@ -59,15 +59,17 @@ class Lexical extends StdLexical with BSONTokens {
 
   def knownOperator = operator ^? ({
     case o if operators.contains(o) => Operator(o)
-  }, "Unknown operatop: " + _)
+  }, u => {
+    val p = operators.map(o => (o, Utils.levenshtein(u, o))).minBy(_._2)._1
+    s"Unknown operator '$u'. Possible you mean '$p'"
+  }
+  )
 
   def ident = field ~ rep('.' ~> (field | index)) ^^ { case p ~ c => p :: c mkString "." }
 
   def index = ('$' ^^^ "$") | number
 
   def field = identChar ~ rep(identChar | digit) ^^ { case x ~ xs => (x :: xs).mkString }
-
-  def wrapQuotes[T](p: Parser[T]): Parser[T] = ('"' ~> p <~ '"') | ('\'' ~> p <~ '\'')
 
   class Scanner(s: super.Scanner, readers: List[Reader[Char]], val part: Int) extends Reader[Token] {
 

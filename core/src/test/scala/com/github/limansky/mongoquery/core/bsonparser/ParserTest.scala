@@ -109,6 +109,8 @@ class ParserTest extends FlatSpec with Matchers with GeneratorDrivenPropertyChec
   }
 
   it should "fail on unknown operators" in {
-    an[IllegalArgumentException] should be thrownBy (parse("{ $foo : { test : 5 }}"))
+    the[IllegalArgumentException] thrownBy {
+      parse("{ $math : { test : 5 }}")
+    } should have message ("""Unknown operator '$math'. Possible you mean '$match'""")
   }
 }
