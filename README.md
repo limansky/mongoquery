@@ -40,7 +40,7 @@ collection.
 ```
 
 Since the query is defined inside of the string interpolator, the words started
-with `$` are handled as variable references.  To type MongoDB keyword use `$$`, e.g:
+with `$` are handled as variable references.  To type MongoDB operator use `$$`, e.g:
 
 ```Scala
 def makeOlder(age: Int) = {
@@ -53,17 +53,19 @@ def makeOlder(age: Int) = {
 Installation
 ------------
 
-MongoQuery is published to Sonatype maven repository.  To use with casbah add the
-module to `libraryDependencies` in sbt build file:
+MongoQuery is published to Sonatype maven repository.  Add following dependency to
+libraryDependencies in your SBT build file:
 
 ```
-"com.github.limansky" %% "mongoquery-casbah" % "0.2"
+"com.github.limansky" %% "mongoquery-casbah" % "0.2"    // for Casbah users
+"com.github.limansky" %% "mongoquery-reactive" % "0.2"  // for ReactiveMongo users
 ```
 
-ReactiveMongo users need to add:
+If you want use latest development version:
 
 ```
-"com.github.limansky" %% "mongoquery-reactive" % "0.2"
+"com.github.limansky" %% "mongoquery-casbah" % "0.3-SNAPSHOT"    // Casbah users
+"com.github.limansky" %% "mongoquery-reactive" % "0.2-SNAPSHOT"  // ReactiveMongo users
 ```
 
 Feedback
