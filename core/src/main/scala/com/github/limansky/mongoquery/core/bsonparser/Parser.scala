@@ -46,8 +46,20 @@ trait Parser extends StdTokenParsers {
   )
 
   val aggregationOperators = Set(
-    "$geoNear", "$group", "$limit", "$match", "$out", "$project", "$redact", "$slip", "$sort", "$unwind",
-    "$addToSet", "$avg", "$first", "$last", "$max", "$min", "$push", "$sum"
+    "$geoNear", "$group", "$limit", "$match", "$out", "$project", "$redact", "$slip", "$sort", "$unwind", // Stage
+    "$and", "$not", "$or", // Boolean
+    "$allElementsTrue", "$anyElementTrue", "$setDifference", "$setIntersection", "$setIsSubset", "$setUnion", // Sets
+    "$cmp", "$eq", "$gt", "$gte", "$lt", "$lte", "$ne", // Comparation
+    "$add", "$divide", "$mod", "$multiply", "$subtract", // Arithmetic
+    "$concat", "$strcasecmp", "$substr", "$toLower", "$toUpper", // String
+    "$meta", // Text search
+    "$size", // Array
+    "$let", "$map", // Variable
+    "$literal", // Literal
+    "$dayOfMonth", "$dayOfWeek", "$dayOfYear", "$hour", "$millisecond",
+    "$minute", "$month", "$second", "$week", "$year", // Date
+    "$cond", "$ifNull", // Conditional
+    "$addToSet", "$avg", "$first", "$last", "$max", "$min", "$push", "$sum" // Accumulator
   )
 
   override val lexical = new Lexical
