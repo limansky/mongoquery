@@ -2,9 +2,6 @@ import sbt._
 import sbt.Keys._
 
 object Common {
-  import scoverage.ScoverageSbtPlugin.instrumentSettings
-  import org.scoverage.coveralls.CoverallsPlugin.coverallsSettings
-
   val settings = Seq(
     version := "0.3-SNAPSHOT",
     scalaVersion := "2.11.4",
@@ -24,7 +21,7 @@ object Common {
       "org.scala-lang"  %  "scala-reflect"  % scalaVersion.value,
       "org.scalatest"   %% "scalatest"      % "2.2.2"             % "test"
     )
-  ) ++ instrumentSettings ++ coverallsSettings
+  )
 }
 
 object Publish {

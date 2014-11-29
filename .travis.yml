@@ -12,6 +12,5 @@ notifications:
 jdk:
   - openjdk7
   - oraclejdk7
-
-# This lead to random fails on uploading.
-# script: "sbt coveralls"
+script: "sbt clean coverage test"
+after_success: "sbt coveralls"
