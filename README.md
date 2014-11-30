@@ -31,6 +31,8 @@ def findByName(name: String) = {
 For [ReactiveMongo][] it creates `BSONDocument`s:
 
 ```Scala
+import com.github.limansky.mongoquery.reactive._
+
 collection.
   find(mq"""{ firstName : "Jack" }""", mq"{ lastName : 1, _id : 1 }").
   cursor[BSONDocument].
@@ -49,6 +51,23 @@ def makeOlder(age: Int) = {
                 multi = 1)
 }
 ```
+
+Since the interpolator is implemented using macro it can perform compile time checks
+of provided queries. The code will not compile if the query is malformed.  Also
+MongoQuery checks if all MongoDB operators are known.
+
+```Scala
+[error] Test.scala:44: Unknown operator '$kte'. Possible you mean '$lte'
+[error]     mq"{start : {$$kte : $now}}" should be(MongoDBObject("start" -> MongoDBObject("$lte" -> now)))
+[error]                  ^
+
+[error] Test.scala:49: `{' expected, but Variable found
+[error]     val q = mq"{ color : {$$in : $colors}"
+[error]                                ^
+```
+
+Unfortunately, some errors messages does not reflect the error itself.  I'm working
+on it, but it seems like the issue in the Scala Parser Combinators library.
 
 Installation
 ------------
