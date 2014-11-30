@@ -57,15 +57,15 @@ MongoQuery is published to Sonatype maven repository.  Add following dependency 
 libraryDependencies in your SBT build file:
 
 ```
-"com.github.limansky" %% "mongoquery-casbah" % "0.2"    // for Casbah users
-"com.github.limansky" %% "mongoquery-reactive" % "0.2"  // for ReactiveMongo users
+"com.github.limansky" %% "mongoquery-casbah" % "0.3"    // for Casbah users
+"com.github.limansky" %% "mongoquery-reactive" % "0.3"  // for ReactiveMongo users
 ```
 
 If you want use latest development version:
 
 ```
-"com.github.limansky" %% "mongoquery-casbah" % "0.3-SNAPSHOT"    // Casbah users
-"com.github.limansky" %% "mongoquery-reactive" % "0.2-SNAPSHOT"  // ReactiveMongo users
+"com.github.limansky" %% "mongoquery-casbah" % "0.4-SNAPSHOT"    // Casbah users
+"com.github.limansky" %% "mongoquery-reactive" % "0.4-SNAPSHOT"  // ReactiveMongo users
 ```
 
 Feedback
