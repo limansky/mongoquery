@@ -18,18 +18,18 @@ package com.github.limansky.mongoquery.core
 
 import MacroContext.Context
 import bsonparser.Parser
+import scala.language.experimental.macros
 
 trait MongoQueryMacro {
 
-  protected def createObject(c: Context)(dbparts: List[(String, c.Expr[Any])]): c.Expr[DBType]
-
-  protected def createId(c: Context)(id: String): c.Expr[Any]
-
   type DBType
+
+  def createObject(c: Context)(dbparts: List[(String, c.Expr[Any])]): c.Expr[DBType]
+  def createId(c: Context)(id: String): c.Expr[Any]
 
   object parser extends Parser
 
-  def mqimpl(c: Context)(args: c.Expr[Any]*): c.Expr[DBType] = {
+  def mq_impl(c: Context)(args: c.Expr[Any]*): c.Expr[DBType] = {
     import c.universe._
 
     lazy val a = args.iterator
@@ -70,4 +70,13 @@ trait MongoQueryMacro {
 
     wrapObject(parsed.members)
   }
+
+  def mqt_impl[T: c.WeakTypeTag](c: Context): c.Expr[DBType] = {
+    import c.universe._
+
+    val Apply(Select(Apply(_, List(Apply(_, partsTrees))), _), _) = c.prefix.tree
+
+    createObject(c)(Nil)
+  }
+
 }

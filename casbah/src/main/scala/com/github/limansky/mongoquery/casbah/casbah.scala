@@ -21,7 +21,13 @@ import com.mongodb.DBObject
 
 package object casbah {
 
+  class QueryWrapper {
+    def apply[T]: DBObject = macro CasbahMacro.c_mqt_impl[T]
+  }
+
   implicit class CasbahQueryHelper(val sc: StringContext) extends AnyVal {
-    def mq(args: Any*): DBObject = macro CasbahMacro.c_mqimpl
+    def mq(args: Any*): DBObject = macro CasbahMacro.c_mq_impl
+
+    def mqt(args: Any*) = new QueryWrapper
   }
 }
