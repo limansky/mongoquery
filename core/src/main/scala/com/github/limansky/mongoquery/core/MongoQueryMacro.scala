@@ -32,31 +32,31 @@ trait MongoQueryMacro {
   def mq_impl(c: Context)(args: c.Expr[Any]*): c.Expr[DBType] = {
     import c.universe._
 
-    lazy val a = args.iterator
-
-    def wrapObject(parts: List[(String, Any)]): c.Expr[DBType] = {
-      val dbparts = parts.map {
-        case (i, v) => (i, wrapValue(v))
-      }
-
-      createObject(c)(dbparts)
-    }
-
-    def wrapValue(value: Any): c.Expr[Any] = value match {
-      case parser.Placeholder => a.next()
-      case parser.Object(m) => wrapObject(m)
-      case parser.Id(id) => createId(c)(id)
-      case a: List[_] =>
-        val wrapped = a.map(i => wrapValue(i))
-        c.Expr[List[Any]](q"List(..$wrapped)")
-      case v => c.Expr[Any](Literal(Constant(v)))
-    }
-
     val Apply(_, List(Apply(_, partsTrees))) = c.prefix.tree
-    val parts = partsTrees map { case Literal(Constant(s: String)) => s }
-    val positions = partsTrees.map(_.pos).toArray
 
-    val parsed = parser.parse(parts) match {
+    val parsed = parse(c)(partsTrees)
+    wrapObject(c)(parsed.members, args.map(_.tree).iterator)
+  }
+
+  def mqt_impl[T: c.WeakTypeTag](c: Context): c.Expr[DBType] = {
+    import c.universe._
+
+    val Apply(Select(Apply(_, List(Apply(_, partsTrees))), _), argsTrees) = c.prefix.tree
+
+    c.info(c.enclosingPosition, showRaw(argsTrees), true)
+
+    val parsed = parse(c)(partsTrees)
+
+    wrapObject(c)(parsed.members, argsTrees.iterator)
+  }
+
+  private def parse(c: Context)(partsTrees: List[c.Tree]) = {
+    import c.universe._
+
+    val parts = partsTrees map { case Literal(Constant(s: String)) => s }
+    val positions = partsTrees.map(_.pos)
+
+    parser.parse(parts) match {
       case parser.Success(obj, _) => obj
       case parser.NoSuccess(msg, r) =>
         val partIndex = if (r.isInstanceOf[parser.lexical.Scanner]) {
@@ -67,16 +67,26 @@ trait MongoQueryMacro {
         val part = positions(partIndex)
         c.abort(part.withPoint(part.point + r.offset), msg)
     }
-
-    wrapObject(parsed.members)
   }
 
-  def mqt_impl[T: c.WeakTypeTag](c: Context): c.Expr[DBType] = {
+  private def wrapValue(c: Context)(value: Any, args: Iterator[c.Tree]): c.Expr[Any] = {
     import c.universe._
-
-    val Apply(Select(Apply(_, List(Apply(_, partsTrees))), _), _) = c.prefix.tree
-
-    createObject(c)(Nil)
+    value match {
+      case parser.Placeholder => c.Expr(args.next())
+      case parser.Object(m) => wrapObject(c)(m, args)
+      case parser.Id(id) => createId(c)(id)
+      case a: List[_] =>
+        val wrapped = a.map(i => wrapValue(c)(i, args))
+        c.Expr[List[Any]](q"List(..$wrapped)")
+      case v => c.Expr[Any](Literal(Constant(v)))
+    }
   }
 
+  private def wrapObject(c: Context)(parts: List[(String, Any)], args: Iterator[c.Tree]): c.Expr[DBType] = {
+    val dbparts = parts.map {
+      case (i, v) => (i, wrapValue(c)(v, args))
+    }
+
+    createObject(c)(dbparts)
+  }
 }
