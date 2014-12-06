@@ -57,12 +57,14 @@ class Lexical extends StdLexical with BSONTokens {
       x :: xs mkString ""
   }
 
-  def knownOperator = operator ^? ({
-    case o if operators.contains(o) => Operator(o)
-  }, u => {
-    val p = operators.map(o => (o, Utils.levenshtein(u, o))).minBy(_._2)._1
-    s"Unknown operator '$u'. Possible you mean '$p'"
-  }
+  def knownOperator = operator ^? (
+    {
+      case o if operators.contains(o) => Operator(o)
+    },
+    u => {
+      val p = operators.map(o => (o, Utils.levenshtein(u, o))).minBy(_._2)._1
+      s"Unknown operator '$u'. Possible you mean '$p'"
+    }
   )
 
   def ident = field ~ rep('.' ~> (field | index)) ^^ { case p ~ c => p :: c mkString "." }

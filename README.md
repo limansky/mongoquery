@@ -16,6 +16,8 @@ goal is to make compile time queries syntax checking (as much as possible).
 How to use
 ----------
 
+### mq interpolator ###
+
 The `mq` string interpolator converts string to the BSON objects. If you use
 [Casbah][] it creates `DBObjects`:
 
@@ -61,13 +63,28 @@ MongoQuery checks if all MongoDB operators are known.
 [error]     mq"{start : {$$kte : $now}}" should be(MongoDBObject("start" -> MongoDBObject("$lte" -> now)))
 [error]                  ^
 
-[error] Test.scala:49: `{' expected, but Variable found
+[error] Test.scala:49: '{' expected, but Variable found
 [error]     val q = mq"{ color : {$$in : $colors}"
 [error]                                ^
 ```
 
 Unfortunately, some errors messages does not reflect the error itself.  I'm working
 on it, but it seems like the issue in the Scala Parser Combinators library.
+
+### mqt interpolator (experimental, 0.4-SNAPSHOT) ###
+
+`mqt` is another one interpolator adding type checking feature.  If you have a model
+classes, you can check if the query contains only fields available in the class. E.g.:
+
+```Scala
+case class Person(name: String, age: Int)
+
+// OK
+persons.update(mq"{}", mqt"{$$inc : { age : 1 }}"[Person])
+
+// Failed, person doesn't contain field 'nme'
+persons.update(mq"{}", mqt"""{$$set : { nme : "Joe" }}"""[Person])
+```
 
 Installation
 ------------

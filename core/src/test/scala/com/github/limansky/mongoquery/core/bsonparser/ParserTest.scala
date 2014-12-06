@@ -22,9 +22,9 @@ import org.scalatest.prop.GeneratorDrivenPropertyChecks
 
 class ParserTest extends FlatSpec with Matchers with GeneratorDrivenPropertyChecks {
 
-  object TestParser extends Parser
+  import com.github.limansky.mongoquery.core.BSON._
 
-  import TestParser.Object
+  object TestParser extends Parser(v => Right(v))
 
   def parseValue(s: String): Any = {
     TestParser.phrase(TestParser.value)(new TestParser.lexical.Scanner(s)) match {
@@ -33,7 +33,7 @@ class ParserTest extends FlatSpec with Matchers with GeneratorDrivenPropertyChec
     }
   }
 
-  def parse(s: String): TestParser.Object = {
+  def parse(s: String): Object = {
     TestParser.parse(s) match {
       case TestParser.Success(r, _) => r
       case TestParser.NoSuccess(m, _) => throw new IllegalArgumentException(m)
@@ -58,7 +58,7 @@ class ParserTest extends FlatSpec with Matchers with GeneratorDrivenPropertyChec
   }
 
   it should "parse objectId values" in {
-    parseValue("ObjectId(\"0123456789abcdef01234567\")") should be(TestParser.Id("0123456789abcdef01234567"))
+    parseValue("ObjectId(\"0123456789abcdef01234567\")") should be(Id("0123456789abcdef01234567"))
   }
 
   it should "not allow invalid ObjectIds" in {

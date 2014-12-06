@@ -26,7 +26,7 @@ object CasbahMacro extends MongoQueryMacro {
 
   def c_mq_impl(c: Context)(args: c.Expr[Any]*): c.Expr[DBObject] = mq_impl(c)(args: _*)
 
-  def c_mqt_impl[T](c: Context): c.Expr[DBObject] = mqt_impl[T](c)
+  def c_mqt_impl[T: c.WeakTypeTag](c: Context): c.Expr[DBObject] = mqt_impl[T](c)
 
   override def createObject(c: Context)(dbparts: List[(String, c.Expr[Any])]): c.Expr[DBObject] = {
     import c.universe._

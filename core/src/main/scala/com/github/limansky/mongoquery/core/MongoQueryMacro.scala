@@ -27,34 +27,43 @@ trait MongoQueryMacro {
   def createObject(c: Context)(dbparts: List[(String, c.Expr[Any])]): c.Expr[DBType]
   def createId(c: Context)(id: String): c.Expr[Any]
 
-  object parser extends Parser
-
   def mq_impl(c: Context)(args: c.Expr[Any]*): c.Expr[DBType] = {
     import c.universe._
 
     val Apply(_, List(Apply(_, partsTrees))) = c.prefix.tree
 
-    val parsed = parse(c)(partsTrees)
+    val parsed = parse(c)(partsTrees, v => Right(v))
     wrapObject(c)(parsed.members, args.map(_.tree).iterator)
   }
 
   def mqt_impl[T: c.WeakTypeTag](c: Context): c.Expr[DBType] = {
     import c.universe._
 
+    val tpe = c.weakTypeOf[T]
+    val idents = TypeInfoAnalyzer.getFields(c)(weakTypeOf[T])
+
+    def check(pair: (String, Any)) = {
+      val (field, value) = pair
+      if (idents.contains(field)) {
+        Right(pair)
+      } else {
+        Left(s"Class ${tpe.toString()} doesn't contain field '$field'")
+      }
+    }
+
     val Apply(Select(Apply(_, List(Apply(_, partsTrees))), _), argsTrees) = c.prefix.tree
-
-    c.info(c.enclosingPosition, showRaw(argsTrees), true)
-
-    val parsed = parse(c)(partsTrees)
+    val parsed = parse(c)(partsTrees, check)
 
     wrapObject(c)(parsed.members, argsTrees.iterator)
   }
 
-  private def parse(c: Context)(partsTrees: List[c.Tree]) = {
+  private def parse(c: Context)(partsTrees: List[c.Tree], check: Function1[(String, Any), Either[String, (String, Any)]]) = {
     import c.universe._
 
     val parts = partsTrees map { case Literal(Constant(s: String)) => s }
     val positions = partsTrees.map(_.pos)
+
+    val parser = new Parser(check)
 
     parser.parse(parts) match {
       case parser.Success(obj, _) => obj
@@ -72,9 +81,9 @@ trait MongoQueryMacro {
   private def wrapValue(c: Context)(value: Any, args: Iterator[c.Tree]): c.Expr[Any] = {
     import c.universe._
     value match {
-      case parser.Placeholder => c.Expr(args.next())
-      case parser.Object(m) => wrapObject(c)(m, args)
-      case parser.Id(id) => createId(c)(id)
+      case BSON.Placeholder => c.Expr(args.next())
+      case BSON.Object(m) => wrapObject(c)(m, args)
+      case BSON.Id(id) => createId(c)(id)
       case a: List[_] =>
         val wrapped = a.map(i => wrapValue(c)(i, args))
         c.Expr[List[Any]](q"List(..$wrapped)")

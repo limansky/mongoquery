@@ -19,14 +19,11 @@ package com.github.limansky.mongoquery.core.bsonparser
 import scala.util.parsing.combinator.syntactical.StdTokenParsers
 import scala.util.parsing.input.CharArrayReader
 
-trait Parser extends StdTokenParsers {
+class Parser(memberValidator: Function1[(String, Any), Either[String, (String, Any)]]) extends StdTokenParsers {
+
+  import com.github.limansky.mongoquery.core.BSON._
 
   override type Tokens = BSONTokens
-
-  case object Placeholder
-  case class Object(members: List[(String, Any)])
-  case class Id(id: String)
-  case class DateTime(l: Long)
 
   val queryOperators = Set(
     "$gt", "$gte", "$lt", "$lte", "$ne", "$in", "$nin", // Compare
@@ -96,8 +93,13 @@ trait Parser extends StdTokenParsers {
   def array: Parser[List[Any]] = ("[" ~> repsep(value, ",") <~ "]")
 
   def member: Parser[(String, Any)] = (ident | operator) ~ ":" ~ (value | variable) ^^ {
-    case i ~ _ ~ v => (i, v)
-  }
+    case i ~ _ ~ v => memberValidator(i, v)
+  } ^? (
+    {
+      case Right((i, v)) => (i, v)
+    },
+    e => e.left.get
+  )
 
   def obj: Parser[Object] = "{" ~> repsep(member, ",") <~ "}" ^^ Object
 
