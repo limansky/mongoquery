@@ -21,7 +21,13 @@ import _root_.reactivemongo.bson.BSONDocument
 
 package object reactive {
 
+  class QueryWrapper {
+    def apply[T]: BSONDocument = macro ReactiveMacro.r_mqt_impl[T]
+  }
+
   implicit class ReactiveQueryHelper(val sc: StringContext) extends AnyVal {
-    def mq(args: Any*): BSONDocument = macro ReactiveMacro.r_mqimpl
+    def mq(args: Any*): BSONDocument = macro ReactiveMacro.r_mq_impl
+
+    def mqt(args: Any*) = new QueryWrapper
   }
 }

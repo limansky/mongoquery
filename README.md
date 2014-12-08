@@ -60,8 +60,8 @@ MongoQuery checks if all MongoDB operators are known.
 
 ```Scala
 [error] Test.scala:44: Unknown operator '$kte'. Possible you mean '$lte'
-[error]     mq"{start : {$$kte : $now}}" should be(MongoDBObject("start" -> MongoDBObject("$lte" -> now)))
-[error]                  ^
+[error]     val query = mq"{start : {$$kte : $start}}"
+[error]                              ^
 
 [error] Test.scala:49: '{' expected, but Variable found
 [error]     val q = mq"{ color : {$$in : $colors}"

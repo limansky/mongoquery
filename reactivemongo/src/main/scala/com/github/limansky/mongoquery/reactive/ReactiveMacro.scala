@@ -24,7 +24,9 @@ object ReactiveMacro extends MongoQueryMacro {
 
   type DBType = BSONDocument
 
-  def r_mqimpl(c: Context)(args: c.Expr[Any]*): c.Expr[BSONDocument] = mq_impl(c)(args: _*)
+  def r_mq_impl(c: Context)(args: c.Expr[Any]*): c.Expr[BSONDocument] = mq_impl(c)(args: _*)
+
+  def r_mqt_impl[T: c.WeakTypeTag](c: Context): c.Expr[BSONDocument] = mqt_impl[T](c)
 
   override def createObject(c: Context)(dbparts: List[(String, c.Expr[Any])]): c.Expr[BSONDocument] = {
     import c.universe._
