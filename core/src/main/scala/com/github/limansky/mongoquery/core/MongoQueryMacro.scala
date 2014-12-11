@@ -44,10 +44,11 @@ trait MongoQueryMacro {
 
     def check(pair: (String, Any)) = {
       val (field, value) = pair
-      if (idents.contains(field)) {
+      val fn = field.takeWhile(_ != '.')
+      if (idents.contains(fn)) {
         Right(pair)
       } else {
-        Left(s"Class ${tpe.toString()} doesn't contain field '$field'")
+        Left(s"Class ${tpe.toString()} doesn't contain field '$fn'")
       }
     }
 
