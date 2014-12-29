@@ -17,15 +17,31 @@
 package com.github.limansky.mongoquery.core
 
 import MacroContext.Context
+import BSON.Member
 
-object TypeInfoAnalyzer {
+abstract class TypeInfoAnalyzer[T](val c: Context) {
 
-  def getFields(c: Context)(tpe: c.Type): List[String] = {
-    import c.universe._
+  protected def tpe: c.Type
+
+  import c.universe._
+
+  val idents = getFields()
+
+  def getFields(): List[String] = {
 
     val ctor = tpe.decl(termNames.CONSTRUCTOR).asMethod
     val params = ctor.paramLists.head
 
     params.map(_.name.toString)
+  }
+
+  def check(pair: (Member, Any)) = {
+    val (field, value) = pair
+
+    if (idents.contains(field.fields.head.name)) {
+      Right(pair)
+    } else {
+      Left(s"Class ${tpe.toString()} doesn't contain field '$field'")
+    }
   }
 }

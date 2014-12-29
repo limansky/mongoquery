@@ -18,7 +18,27 @@ package com.github.limansky.mongoquery.core
 
 object BSON {
   case object Placeholder
-  case class Object(members: List[(String, Any)])
+  case class Object(members: List[(LValue, Any)])
   case class Id(id: String)
   case class DateTime(l: Long)
+
+  sealed abstract class IdentPart(val name: String)
+
+  case class Field(override val name: String) extends IdentPart(name)
+  case class IndexedField(override val name: String, index: String) extends IdentPart(name)
+
+  sealed abstract class LValue {
+    def asString: String
+  }
+
+  case class Member(fields: Seq[IdentPart]) extends LValue {
+    override val asString = fields.map {
+      case Field(n) => n
+      case IndexedField(n, i) => n + "." + i
+    } mkString "."
+  }
+
+  case class Operator(name: String) extends LValue {
+    override val asString = name
+  }
 }

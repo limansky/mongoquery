@@ -20,6 +20,9 @@ import scala.util.parsing.combinator.lexical.StdLexical
 import scala.util.parsing.input.Reader
 import scala.util.parsing.input.CharArrayReader
 import scala.collection.mutable
+import com.github.limansky.mongoquery.core.BSON.IndexedField
+import com.github.limansky.mongoquery.core.BSON.Field
+import com.github.limansky.mongoquery.core.BSON.IdentPart
 
 class Lexical extends StdLexical with BSONTokens {
 
@@ -31,7 +34,7 @@ class Lexical extends StdLexical with BSONTokens {
     float ^^ DoubleLit
     | '-' ~> number ^^ { case n => NumericLit('-' + n) }
     | knownOperator
-    | ident ^^ processIdent
+    | ident ^^ wrapIdent
     | super.token
   )
 
@@ -59,7 +62,7 @@ class Lexical extends StdLexical with BSONTokens {
 
   def knownOperator = operator ^? (
     {
-      case o if operators.contains(o) => Operator(o)
+      case o if operators.contains(o) => OperatorLit(o)
     },
     u => {
       val p = operators.map(o => (o, Utils.levenshtein(u, o))).minBy(_._2)._1
@@ -67,11 +70,22 @@ class Lexical extends StdLexical with BSONTokens {
     }
   )
 
-  def ident = field ~ rep('.' ~> (field | index)) ^^ { case p ~ c => p :: c mkString "." }
+  def ident = rep1(indexedField | field)
 
   def index = ('$' ^^^ "$") | number
 
-  def field = identChar ~ rep(identChar | digit) ^^ { case x ~ xs => (x :: xs).mkString }
+  def indexedField = fieldName ~ index ^^ { case f ~ i => IndexedField(f, i) }
+
+  def field = fieldName ^^ Field
+
+  def fieldName = identChar ~ rep(identChar | digit) ^^ { case x ~ xs => (x :: xs).mkString }
+
+  def wrapIdent(parts: List[IdentPart]): Token = {
+    parts match {
+      case Field(f) :: Nil if reserved contains f => Keyword(f)
+      case _ => FieldLit(parts)
+    }
+  }
 
   class Scanner(s: super.Scanner, readers: List[Reader[Char]], val part: Int) extends Reader[Token] {
 

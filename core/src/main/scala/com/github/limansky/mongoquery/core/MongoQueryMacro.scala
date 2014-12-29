@@ -19,6 +19,8 @@ package com.github.limansky.mongoquery.core
 import MacroContext.Context
 import bsonparser.Parser
 import scala.language.experimental.macros
+import com.github.limansky.mongoquery.core.BSON.Member
+import com.github.limansky.mongoquery.core.BSON.LValue
 
 trait MongoQueryMacro {
 
@@ -39,26 +41,17 @@ trait MongoQueryMacro {
   def mqt_impl[T: c.WeakTypeTag](c: Context): c.Expr[DBType] = {
     import c.universe._
 
-    val tpe = c.weakTypeOf[T]
-    val idents = TypeInfoAnalyzer.getFields(c)(weakTypeOf[T])
-
-    def check(pair: (String, Any)) = {
-      val (field, value) = pair
-      val fn = field.takeWhile(_ != '.')
-      if (idents.contains(fn)) {
-        Right(pair)
-      } else {
-        Left(s"Class ${tpe.toString()} doesn't contain field '$fn'")
-      }
+    val analyzer = new TypeInfoAnalyzer[T](c) {
+      override val tpe = c.weakTypeOf[T]
     }
 
     val Apply(Select(Apply(_, List(Apply(_, partsTrees))), _), argsTrees) = c.prefix.tree
-    val parsed = parse(c)(partsTrees, check)
+    val parsed = parse(c)(partsTrees, analyzer.check)
 
     wrapObject(c)(parsed.members, argsTrees.iterator)
   }
 
-  private def parse(c: Context)(partsTrees: List[c.Tree], check: Function1[(String, Any), Either[String, (String, Any)]]) = {
+  private def parse(c: Context)(partsTrees: List[c.Tree], check: Function1[(Member, Any), Either[String, (Member, Any)]]) = {
     import c.universe._
 
     val parts = partsTrees map { case Literal(Constant(s: String)) => s }
@@ -92,9 +85,9 @@ trait MongoQueryMacro {
     }
   }
 
-  private def wrapObject(c: Context)(parts: List[(String, Any)], args: Iterator[c.Tree]): c.Expr[DBType] = {
+  private def wrapObject(c: Context)(parts: List[(LValue, Any)], args: Iterator[c.Tree]): c.Expr[DBType] = {
     val dbparts = parts.map {
-      case (i, v) => (i, wrapValue(c)(v, args))
+      case (lv, v) => (lv.asString, wrapValue(c)(v, args))
     }
 
     createObject(c)(dbparts)

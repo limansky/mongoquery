@@ -18,8 +18,9 @@ package com.github.limansky.mongoquery.core.bsonparser
 
 import scala.util.parsing.combinator.syntactical.StdTokenParsers
 import scala.util.parsing.input.CharArrayReader
+import com.github.limansky.mongoquery.core.BSON.Member
 
-class Parser(memberValidator: Function1[(String, Any), Either[String, (String, Any)]]) extends StdTokenParsers {
+class Parser(memberValidator: Function1[(Member, Any), Either[String, (Member, Any)]]) extends StdTokenParsers {
 
   import com.github.limansky.mongoquery.core.BSON._
 
@@ -70,7 +71,7 @@ class Parser(memberValidator: Function1[(String, Any), Either[String, (String, A
 
   def value: Parser[Any] = id | stringLit | int | double | boolean | nullLit | array | obj
 
-  def operator: Parser[String] = elem("operator", _.isInstanceOf[Operator]) ^^ (_.chars)
+  def operator: Parser[String] = elem("operator", _.isInstanceOf[OperatorLit]) ^^ (_.chars)
 
   def variable = elem("variable", _ == Variable) ^^^ Placeholder
 
@@ -90,9 +91,11 @@ class Parser(memberValidator: Function1[(String, Any), Either[String, (String, A
 
   def id: Parser[Id] = keyword("ObjectId") ~> "(" ~> objectIdValue <~ ")" ^^ Id
 
+  def fields: Parser[Member] = elem("fields", _.isInstanceOf[FieldLit]) ^^ { case FieldLit(p) => Member(p) }
+
   def array: Parser[List[Any]] = ("[" ~> repsep(value, ",") <~ "]")
 
-  def member: Parser[(String, Any)] = (ident | operator) ~ ":" ~ (value | variable) ^^ {
+  def member: Parser[(LValue, Any)] = fields ~ ":" ~ (value | variable) ^^ {
     case i ~ _ ~ v => memberValidator(i, v)
   } ^? (
     {

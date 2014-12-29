@@ -17,15 +17,19 @@
 package com.github.limansky.mongoquery.core.bsonparser
 
 import scala.util.parsing.combinator.token.StdTokens
+import com.github.limansky.mongoquery.core.BSON.IdentPart
 
 trait BSONTokens extends StdTokens {
 
   case class DoubleLit(chars: String) extends Token
 
-  case class Operator(chars: String) extends Token
+  case class OperatorLit(chars: String) extends Token
 
   case object Variable extends Token {
     override val chars = "variable"
   }
 
+  case class FieldLit(parts: List[IdentPart]) extends Token {
+    override def chars = parts.mkString(".")
+  }
 }
