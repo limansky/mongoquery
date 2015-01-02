@@ -70,11 +70,11 @@ class Lexical extends StdLexical with BSONTokens {
     }
   )
 
-  def ident = rep1(indexedField | field)
+  def ident = rep1sep(indexedField | field, '.')
 
   def index = ('$' ^^^ "$") | number
 
-  def indexedField = fieldName ~ index ^^ { case f ~ i => IndexedField(f, i) }
+  def indexedField = fieldName ~ '.' ~ index ^^ { case f ~ _ ~ i => IndexedField(f, i) }
 
   def field = fieldName ^^ Field
 

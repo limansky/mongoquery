@@ -40,6 +40,8 @@ class ParserTest extends FlatSpec with Matchers with GeneratorDrivenPropertyChec
     }
   }
 
+  def fld(names: String*) = Member(names.map(Field))
+
   "BSON Parser" should "parse string values" in {
     parseValue("\"It's a string\"") should be("It's a string")
     parseValue("'a string'") should be("a string")
@@ -71,7 +73,7 @@ class ParserTest extends FlatSpec with Matchers with GeneratorDrivenPropertyChec
   }
 
   it should "parse objects" in {
-    parse("{a : 1, b : 2}") should be(Object(List("a" -> 1, "b" -> 2)))
+    parse("{a : 1, b : 2}") should be(Object(List(fld("a") -> 1, fld("b") -> 2)))
   }
 
   it should "parse empty object" in {
@@ -79,33 +81,34 @@ class ParserTest extends FlatSpec with Matchers with GeneratorDrivenPropertyChec
   }
 
   it should "parse nested arrays" in {
-    parse("{ c: [1,2,3]}") should be(Object(List("c" -> List(1, 2, 3))))
+    parse("{ c: [1,2,3]}") should be(Object(List(fld("c") -> List(1, 2, 3))))
   }
 
   it should "parse nested objects" in {
-    parse("{ d: { e : \"ooo\" }}") should be(Object(List("d" -> Object(List("e" -> "ooo")))))
+    parse("{ d: { e : \"ooo\" }}") should be(Object(List(fld("d") -> Object(List(fld("e") -> "ooo")))))
   }
 
   it should "process special operators" in {
-    parse("{ $lt : 11 }") should be(Object(List("$lt" -> 11)))
+    parse("{ $lt : 11 }") should be(Object(List(Operator("$lt") -> 11)))
   }
 
   it should "allow access to inner fields" in {
-    parse("{ employee.name : \"John\" }") should be(Object(List("employee.name" -> "John")))
-    parse("{ user.address.building : \"10\" }") should be(Object(List("user.address.building" -> "10")))
+    parse("{ employee.name : \"John\" }") should be(Object(List(fld("employee", "name") -> "John")))
+    parse("{ user.address.building : \"10\" }") should be(Object(List(fld("user", "address", "building") -> "10")))
   }
 
   it should "allow access to array item" in {
-    parse("{ clients.3 : 5 }") should be(Object(List("clients.3" -> 5)))
-    parse("{ clients.$.size : { $gt : 100 }}") should be(Object(List("clients.$.size" -> Object(List("$gt" -> 100)))))
+    parse("{ clients.3 : 5 }") should be(Object(List(Member(IndexedField("clients", "3") :: Nil) -> 5)))
+    parse("{ clients.$.size : { $gt : 100 }}") should be(Object(List(Member(IndexedField("clients", "$") :: Field("size") :: Nil) ->
+      Object(List(Operator("$gt") -> 100)))))
   }
 
   it should "be possible to use boolean literals" in {
-    parse("{ foo: true, bar: false }") should be(Object(List("foo" -> true, "bar" -> false)))
+    parse("{ foo: true, bar: false }") should be(Object(List(fld("foo") -> true, fld("bar") -> false)))
   }
 
   it should "be possible to use null literal" in {
-    parse("{ b: null }") should be(Object(List("b" -> null)))
+    parse("{ b: null }") should be(Object(List(fld("b") -> null)))
   }
 
   it should "fail on unknown operators" in {

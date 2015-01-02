@@ -71,7 +71,7 @@ class Parser(memberValidator: Function1[(Member, Any), Either[String, (Member, A
 
   def value: Parser[Any] = id | stringLit | int | double | boolean | nullLit | array | obj
 
-  def operator: Parser[String] = elem("operator", _.isInstanceOf[OperatorLit]) ^^ (_.chars)
+  def operator: Parser[Operator] = elem("operator", _.isInstanceOf[OperatorLit]) ^^ (o => Operator(o.chars))
 
   def variable = elem("variable", _ == Variable) ^^^ Placeholder
 
@@ -95,7 +95,7 @@ class Parser(memberValidator: Function1[(Member, Any), Either[String, (Member, A
 
   def array: Parser[List[Any]] = ("[" ~> repsep(value, ",") <~ "]")
 
-  def member: Parser[(LValue, Any)] = fields ~ ":" ~ (value | variable) ^^ {
+  def fldMember: Parser[(LValue, Any)] = fields ~ ":" ~ (value | variable) ^^ {
     case i ~ _ ~ v => memberValidator(i, v)
   } ^? (
     {
@@ -103,6 +103,12 @@ class Parser(memberValidator: Function1[(Member, Any), Either[String, (Member, A
     },
     e => e.left.get
   )
+
+  def opMemeber: Parser[(LValue, Any)] = operator ~ ":" ~ (value | variable) ^^ {
+    case o ~ _ ~ v => (o, v)
+  }
+
+  def member = fldMember | opMemeber
 
   def obj: Parser[Object] = "{" ~> repsep(member, ",") <~ "}" ^^ Object
 
