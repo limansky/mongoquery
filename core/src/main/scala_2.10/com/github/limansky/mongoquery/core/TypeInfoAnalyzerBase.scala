@@ -18,14 +18,16 @@ package com.github.limansky.mongoquery.core
 
 import MacroContext.Context
 
-object TypeInfoAnalyzer {
+abstract class TypeInfoAnalyzerBase(val c: Context) {
 
-  def getFields(c: Context)(tpe: c.Type): List[String] = {
+  protected def tpe: c.Type
+
+  def getFields(): Map[String, c.Symbol] = {
     import c.universe._
 
     val ctor = tpe.declaration(nme.CONSTRUCTOR).asMethod
     val params = ctor.paramss.head
 
-    params.map(_.name.decoded)
+    params.map(s => s.name.decoded -> s).toMap
   }
 }

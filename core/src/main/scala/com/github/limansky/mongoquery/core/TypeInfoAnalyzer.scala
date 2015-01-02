@@ -17,31 +17,26 @@
 package com.github.limansky.mongoquery.core
 
 import MacroContext.Context
-import BSON.Member
+import BSON.{ Member, IndexedField }
 
-abstract class TypeInfoAnalyzer[T](val c: Context) {
-
-  protected def tpe: c.Type
-
-  import c.universe._
-
-  val idents = getFields()
-
-  def getFields(): List[String] = {
-
-    val ctor = tpe.decl(termNames.CONSTRUCTOR).asMethod
-    val params = ctor.paramLists.head
-
-    params.map(_.name.toString)
-  }
+abstract class TypeInfoAnalyzer(override val c: Context) extends TypeInfoAnalyzerBase(c) {
 
   def check(pair: (Member, Any)) = {
-    val (field, value) = pair
+    import c.universe._
 
-    if (idents.contains(field.fields.head.name)) {
-      Right(pair)
-    } else {
-      Left(s"Class ${tpe.toString()} doesn't contain field '$field'")
+    val (field, value) = pair
+    val idents = getFields()
+    val f = field.fields.head
+
+    idents.get(f.name) match {
+      case Some(s) =>
+        f match {
+          case IndexedField(n, i) if !(s.typeSignature <:< typeOf[Traversable[_]]) =>
+            Left(s"Field ${f.name} of type ${s.typeSignature} cannot be indexed")
+          case _ => Right(pair)
+        }
+      case None =>
+        Left(s"Class ${tpe.toString()} doesn't contain field '${field.asString}'")
     }
   }
 }

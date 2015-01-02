@@ -41,7 +41,7 @@ trait MongoQueryMacro {
   def mqt_impl[T: c.WeakTypeTag](c: Context): c.Expr[DBType] = {
     import c.universe._
 
-    val analyzer = new TypeInfoAnalyzer[T](c) {
+    val analyzer = new TypeInfoAnalyzer(c) {
       override val tpe = c.weakTypeOf[T]
     }
 
