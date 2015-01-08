@@ -17,26 +17,36 @@
 package com.github.limansky.mongoquery.core
 
 import MacroContext.Context
-import BSON.{ Member, IndexedField }
+import BSON.{ Member, IndexedField, IdentPart }
 
-abstract class TypeInfoAnalyzer(override val c: Context) extends TypeInfoAnalyzerBase(c) {
+class TypeInfoAnalyzer[C <: Context](override val c: C) extends TypeInfoAnalyzerBase(c) {
 
-  def check(pair: (Member, Any)) = {
-    import c.universe._
+  import c.universe._
 
-    val (field, value) = pair
-    val idents = getFields()
-    val f = field.fields.head
+  private def doCheck(pair: (Member, Any), tpe: c.Type, parts: List[IdentPart]): Either[String, (Member, Any)] = {
 
-    idents.get(f.name) match {
+    val t = getEffectiveType(tpe)
+    val f :: fs = parts
+
+    getFields(t).get(f.name) match {
       case Some(s) =>
         f match {
-          case IndexedField(n, i) if !(s.typeSignature <:< typeOf[Traversable[_]]) =>
+          case IndexedField(_, _) if !(s.typeSignature <:< typeOf[Traversable[_]]) =>
             Left(s"Field ${f.name} of type ${s.typeSignature} cannot be indexed")
+
+          case fld if fs.nonEmpty =>
+            val nested = s.typeSignature
+            doCheck(pair, nested, fs)
+
           case _ => Right(pair)
         }
+
       case None =>
-        Left(s"Class ${tpe.toString()} doesn't contain field '${field.asString}'")
+        Left(s"Class ${t.toString} doesn't contain field '${f.name}'")
     }
+  }
+
+  def check(tpe: c.Type)(pair: (Member, Any)): Either[String, (Member, Any)] = {
+    doCheck(pair, tpe, pair._1.fields)
   }
 }

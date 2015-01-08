@@ -31,7 +31,7 @@ object BSON {
     def asString: String
   }
 
-  case class Member(fields: Seq[IdentPart]) extends LValue {
+  case class Member(fields: List[IdentPart]) extends LValue {
     override val asString = fields.map {
       case Field(n) => n
       case IndexedField(n, i) => n + "." + i

@@ -40,7 +40,7 @@ class ParserTest extends FlatSpec with Matchers with GeneratorDrivenPropertyChec
     }
   }
 
-  def fld(names: String*) = Member(names.map(Field))
+  def fld(names: String*) = Member(names.map(Field).toList)
 
   "BSON Parser" should "parse string values" in {
     parseValue("\"It's a string\"") should be("It's a string")

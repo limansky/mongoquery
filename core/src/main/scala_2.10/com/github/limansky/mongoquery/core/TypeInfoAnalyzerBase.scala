@@ -18,11 +18,19 @@ package com.github.limansky.mongoquery.core
 
 import MacroContext.Context
 
-abstract class TypeInfoAnalyzerBase(val c: Context) {
+abstract class TypeInfoAnalyzerBase[C <: Context](val c: C) {
 
-  protected def tpe: c.Type
+  def getEffectiveType(tpe: c.Type): c.Type = {
+    import c.universe._
 
-  def getFields(): Map[String, c.Symbol] = {
+    if (tpe <:< typeOf[Option[_]] || tpe <:< typeOf[Traversable[_]]) {
+      tpe.asInstanceOf[TypeRefApi].args.head
+    } else {
+      tpe
+    }
+  }
+
+  def getFields(tpe: c.Type): Map[String, c.Symbol] = {
     import c.universe._
 
     val ctor = tpe.declaration(nme.CONSTRUCTOR).asMethod
