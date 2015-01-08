@@ -77,13 +77,23 @@ on it, but it seems like the issue in the Scala Parser Combinators library.
 classes, you can check if the query contains only fields available in the class. E.g.:
 
 ```Scala
-case class Person(name: String, age: Int)
+case class Phone(kind: String, number: String)
+case class Person(name: String, age: Int, phones: List[Phone])
 
 // OK
 persons.update(mq"{}", mqt"{$$inc : { age : 1 }}"[Person])
 
 // Failed, person doesn't contain field 'nme'
 persons.update(mq"{}", mqt"""{$$set : { nme : "Joe" }}"""[Person])
+
+//Failed, name is not indexed field
+persons.find(mqt"{ name.1 : 'Joe' }"[Person])
+
+// OK
+persons.find(mqt"{ phone.number : '223322' }"[Person])
+
+// Failed, Phone doesn't contain field num
+persons.find(mqt"{ phone.num : '223322' }"[Person])
 ```
 
 Installation
