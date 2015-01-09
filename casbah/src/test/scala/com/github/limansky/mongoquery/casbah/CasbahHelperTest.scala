@@ -24,7 +24,12 @@ import java.util.Date
 
 class CasbahHelperTest extends FlatSpec with Matchers {
 
-  "CasbahHelper" should "convert string into MongoDBObject" in {
+  case class Foo(s: String)
+  case class Bar(i: Int, f: Foo)
+  case class Baz(d: Double, f: Option[Foo])
+  case class Quux(s: String, lf: List[Foo])
+
+  "CasbahHelper mq implementation" should "convert string into MongoDBObject" in {
     mq"{ amount : { $$lte : 15}}" should equal(MongoDBObject("amount" -> MongoDBObject("$lte" -> 15)))
   }
 
@@ -83,5 +88,28 @@ class CasbahHelperTest extends FlatSpec with Matchers {
 
   it should "support null" in {
     mq"{bar : null}" should equal(MongoDBObject("bar" -> null))
+  }
+
+  it should "support empty objects" in {
+    mq"{}" should equal(MongoDBObject.empty)
+  }
+
+  "CasbahHelper mqt implementation" should "pass valid object" in {
+    mqt"{ s : 'test' }"[Foo] should equal(MongoDBObject("s" -> "test"))
+    mqt"{ i : 5, f.s : 'test' }"[Bar] should equal(MongoDBObject("i" -> 5, "f.s" -> "test"))
+  }
+
+  it should "ignore operators" in {
+    mqt"{ $$set : { s : 'aaa'}}"[Foo] should equal(MongoDBObject("$set" -> MongoDBObject("s" -> "aaa")))
+  }
+
+  it should "handle options" in {
+    mqt"{ d : 3.14, f.s : 'bbb'}"[Baz] should equal(MongoDBObject("d" -> 3.14, "f.s" -> "bbb"))
+  }
+
+  it should "handle collections" in {
+    mqt"{ s : 'ccc', lf.s : 'zzzz' }"[Quux] should equal(MongoDBObject("s" -> "ccc", "lf.s" -> "zzzz"))
+    mqt"{ s : 'ccc', lf.1.s : 'zzzz' }"[Quux] should equal(MongoDBObject("s" -> "ccc", "lf.1.s" -> "zzzz"))
+    mqt"{ s : 'ccc', lf.$$.s : 'zzzz' }"[Quux] should equal(MongoDBObject("s" -> "ccc", "lf.$.s" -> "zzzz"))
   }
 }

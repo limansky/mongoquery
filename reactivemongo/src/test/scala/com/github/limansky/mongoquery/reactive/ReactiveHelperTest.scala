@@ -25,7 +25,12 @@ import reactivemongo.bson.BSONDateTime
 
 class ReactiveHelperTest extends FlatSpec with Matchers {
 
-  "ReactiveHelper" should "convert string into BSONDocument" in {
+  case class Foo(s: String)
+  case class Bar(i: Int, f: Foo)
+  case class Baz(d: Double, f: Option[Foo])
+  case class Quux(s: String, lf: List[Foo])
+
+  "ReactiveHelper mq implementation" should "convert string into BSONDocument" in {
     val q = mq"{ amount : { $$lte : 15}}"
     q should equal(BSONDocument("amount" -> BSONDocument("$lte" -> 15)))
   }
@@ -82,5 +87,28 @@ class ReactiveHelperTest extends FlatSpec with Matchers {
 
   it should "support null" in {
     mq"{bar : null}" should equal(BSONDocument("bar" -> null))
+  }
+
+  it should "support empty objects" in {
+    mq"{}" should equal(BSONDocument.empty)
+  }
+
+  "ReactiveHelper mqt implementation" should "pass valid object" in {
+    mqt"{ s : 'test' }"[Foo] should equal(BSONDocument("s" -> "test"))
+    mqt"{ i : 5, f.s : 'test' }"[Bar] should equal(BSONDocument("i" -> 5, "f.s" -> "test"))
+  }
+
+  it should "ignore operators" in {
+    mqt"{ $$set : { s : 'aaa'}}"[Foo] should equal(BSONDocument("$set" -> BSONDocument("s" -> "aaa")))
+  }
+
+  it should "handle options" in {
+    mqt"{ d : 3.14, f.s : 'bbb'}"[Baz] should equal(BSONDocument("d" -> 3.14, "f.s" -> "bbb"))
+  }
+
+  it should "handle collections" in {
+    mqt"{ s : 'ccc', lf.s : 'zzzz' }"[Quux] should equal(BSONDocument("s" -> "ccc", "lf.s" -> "zzzz"))
+    mqt"{ s : 'ccc', lf.1.s : 'zzzz' }"[Quux] should equal(BSONDocument("s" -> "ccc", "lf.1.s" -> "zzzz"))
+    mqt"{ s : 'ccc', lf.$$.s : 'zzzz' }"[Quux] should equal(BSONDocument("s" -> "ccc", "lf.$.s" -> "zzzz"))
   }
 }
