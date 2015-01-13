@@ -30,6 +30,7 @@ trait BSONTokens extends StdTokens {
   }
 
   case class FieldLit(parts: List[IdentPart]) extends Token {
-    override def chars = parts.mkString(".")
+    override def chars = parts.map(_.name) mkString (".")
+    override def toString() = chars
   }
 }

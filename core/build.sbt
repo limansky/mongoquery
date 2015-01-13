@@ -13,7 +13,10 @@ libraryDependencies <++= scalaVersion { sv =>
   }
 }
 
-libraryDependencies += "org.scalacheck" %% "scalacheck" % "1.12.1" % "test"
+libraryDependencies ++= Seq(
+  "org.scalacheck"  %% "scalacheck"         % "1.12.1"              % "test",
+  "org.scala-lang"  %  "scala-compiler"     % scalaVersion.value    % "test"
+)
 
 unmanagedSourceDirectories in Compile <+= (scalaBinaryVersion, sourceDirectory in Compile) { (v, d) =>
   d / s"scala_$v"
