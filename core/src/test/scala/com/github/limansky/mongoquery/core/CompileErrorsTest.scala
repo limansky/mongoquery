@@ -34,9 +34,9 @@ abstract class CompileErrorsTest extends FlatSpec with Matchers with TableDriven
   val mirror = ru.runtimeMirror(cl)
   val tb = mirror.mkToolBox(options = s"-cp $cp")
 
-  val importStr: String
+  def imports = "com.github.limansky.mongoquery.core.TestObjects._" :: Nil
 
-  def wi(s: String) = importStr + "\n" + s
+  def wi(s: String) = imports.map("import " + _).reduceLeft(_ + "\n" + _) + "\n" + s
 
   val malformed = Table(
     ("query", "message"),
@@ -61,6 +61,31 @@ abstract class CompileErrorsTest extends FlatSpec with Matchers with TableDriven
 
   it should "fail on unknown operators" in {
     checkError("""mq"{a : { $$exits : true}}"""", "Unknown operator '$exits'. Possible you mean '$exists'")
+  }
+
+  val unknownField = Table(
+    ("query", "message"),
+    ("""mqt"{a : 'bar'}"[Foo]""", "Class Foo doesn't contain field 'a'"),
+    ("""mqt"{f.a : 'bar'}"[Bar]""", "Class Foo doesn't contain field 'a'"),
+    ("""mqt"{f.a : 'bar'}"[Baz]""", "Class Foo doesn't contain field 'a'"),
+    ("""mqt"{lf.1.a : 'bar'}"[Quux]""", "Class Foo doesn't contain field 'a'"),
+    ("""mqt"{lf.$$.a : 'bar'}"[Quux]""", "Class Foo doesn't contain field 'a'"),
+    ("""mqt"{f.1.s : 'bar'}"[Quux]""", "Class Quux doesn't contain field 'f'")
+  )
+
+  "mqt" should "fail if field does not exists" in {
+    forAll(unknownField)(checkError)
+  }
+
+  val wrongIndexing = Table(
+    ("query", "message"),
+    ("""mqt"{ s.1 : 'test'}"[Foo]""", "Field s of type String cannot be indexed"),
+    ("""mqt"{ i.1 : 42}"[Bar]""", "Field i of type Int cannot be indexed"),
+    ("""mqt"{ f.1 : 42}"[Baz]""", "Field f of type Option[com.github.limansky.mongoquery.core.TestObjects.Foo] cannot be indexed")
+  )
+
+  it should "fail on indexing of not Traversable" in {
+    forAll(wrongIndexing)(checkError)
   }
 
 }

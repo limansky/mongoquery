@@ -19,6 +19,5 @@ package com.github.limansky.mongoquery.casbah
 import com.github.limansky.mongoquery.core.CompileErrorsTest
 
 class CasbahCompileErrorsTest extends CompileErrorsTest {
-
-  val importStr = "import com.github.limansky.mongoquery.casbah._"
+  override val imports = "com.github.limansky.mongoquery.casbah._" :: super.imports
 }

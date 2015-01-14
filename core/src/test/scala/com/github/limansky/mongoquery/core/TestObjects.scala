@@ -14,10 +14,11 @@
  * limitations under the License.
  */
 
-package com.github.limansky.mongoquery.reactive
+package com.github.limansky.mongoquery.core
 
-import com.github.limansky.mongoquery.core.CompileErrorsTest
-
-class ReactiveCompileErrorTest extends CompileErrorsTest {
-  override val imports = "com.github.limansky.mongoquery.reactive._" :: super.imports
+object TestObjects {
+  case class Foo(s: String)
+  case class Bar(i: Int, f: Foo)
+  case class Baz(d: Double, f: Option[Foo])
+  case class Quux(s: String, lf: List[Foo])
 }
