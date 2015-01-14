@@ -42,7 +42,7 @@ class TypeInfoAnalyzer[C <: Context](override val c: C) extends TypeInfoAnalyzer
         }
 
       case None =>
-        Left(s"Class ${t.toString} doesn't contain field '${f.name}'")
+        Left(s"Class ${t.typeSymbol.name.toString} doesn't contain field '${f.name}'")
     }
   }
 

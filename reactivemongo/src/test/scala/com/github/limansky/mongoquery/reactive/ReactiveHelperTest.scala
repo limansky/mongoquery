@@ -25,10 +25,7 @@ import reactivemongo.bson.BSONDateTime
 
 class ReactiveHelperTest extends FlatSpec with Matchers {
 
-  case class Foo(s: String)
-  case class Bar(i: Int, f: Foo)
-  case class Baz(d: Double, f: Option[Foo])
-  case class Quux(s: String, lf: List[Foo])
+  import com.github.limansky.mongoquery.core.TestObjects._
 
   "ReactiveHelper mq implementation" should "convert string into BSONDocument" in {
     val q = mq"{ amount : { $$lte : 15}}"
