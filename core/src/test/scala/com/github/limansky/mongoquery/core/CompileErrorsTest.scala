@@ -20,11 +20,10 @@ import org.scalatest.FlatSpec
 import org.scalatest.Matchers
 import scala.reflect.runtime.{ universe => ru }
 import scala.tools.reflect.ToolBox
+import scala.tools.reflect.ToolBoxError
 import java.net.URLClassLoader
 import java.io.File
 import org.scalatest.prop.TableDrivenPropertyChecks
-import scala.tools.reflect.ToolBoxError
-import scala.reflect.runtime.{ universe => ru }
 
 abstract class CompileErrorsTest extends FlatSpec with Matchers with TableDrivenPropertyChecks {
 
