@@ -71,7 +71,7 @@ MongoQuery checks if all MongoDB operators are known.
 Unfortunately, some errors messages does not reflect the error itself.  I'm working
 on it, but it seems like the issue in the Scala Parser Combinators library.
 
-### mqt interpolator (experimental, 0.4-SNAPSHOT) ###
+### mqt interpolator ###
 
 `mqt` is another one interpolator adding type checking feature.  If you have a model
 classes, you can check if the query contains only fields available in the class. E.g.:
@@ -103,15 +103,15 @@ MongoQuery is published to Sonatype maven repository.  Add following dependency 
 libraryDependencies in your SBT build file:
 
 ```
-"com.github.limansky" %% "mongoquery-casbah" % "0.3"    // for Casbah users
-"com.github.limansky" %% "mongoquery-reactive" % "0.3"  // for ReactiveMongo users
+"com.github.limansky" %% "mongoquery-casbah" % "0.4"    // for Casbah users
+"com.github.limansky" %% "mongoquery-reactive" % "0.4"  // for ReactiveMongo users
 ```
 
 If you want use latest development version:
 
 ```
-"com.github.limansky" %% "mongoquery-casbah" % "0.4-SNAPSHOT"    // Casbah users
-"com.github.limansky" %% "mongoquery-reactive" % "0.4-SNAPSHOT"  // ReactiveMongo users
+"com.github.limansky" %% "mongoquery-casbah" % "0.5-SNAPSHOT"    // Casbah users
+"com.github.limansky" %% "mongoquery-reactive" % "0.5-SNAPSHOT"  // ReactiveMongo users
 ```
 
 Feedback

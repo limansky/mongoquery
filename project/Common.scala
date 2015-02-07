@@ -3,7 +3,7 @@ import sbt.Keys._
 
 object Common {
   val settings = Seq(
-    version := "0.4-SNAPSHOT",
+    version := "0.4",
     scalaVersion := "2.11.5",
     crossScalaVersions := Seq("2.11.5", "2.10.4"),
     scalacOptions ++= Seq("-deprecation", "-unchecked", "-feature"),
