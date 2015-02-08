@@ -20,6 +20,9 @@ import com.github.limansky.mongoquery.core.MongoQueryMacro
 import com.github.limansky.mongoquery.core.MacroContext.Context
 import reactivemongo.bson.BSONDocument
 
+/**
+ * Macro implementation for ReactiveMongo.
+ */
 object ReactiveMacro extends MongoQueryMacro {
 
   type DBType = BSONDocument

@@ -20,6 +20,9 @@ import com.github.limansky.mongoquery.core.MongoQueryMacro
 import com.github.limansky.mongoquery.core.MacroContext.Context
 import com.mongodb.DBObject
 
+/**
+ * Macro implementation for Casbah.
+ */
 object CasbahMacro extends MongoQueryMacro {
 
   type DBType = DBObject

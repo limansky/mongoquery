@@ -22,13 +22,44 @@ import scala.language.experimental.macros
 import com.github.limansky.mongoquery.core.BSON.Member
 import com.github.limansky.mongoquery.core.BSON.LValue
 
+/**
+ * Base macro implemenation without dependency to any MongoDB driver.
+ *
+ * If you going to create MongoQuery implementation for your driver it a nice
+ * place to start to extend this trait.
+ */
 trait MongoQueryMacro {
 
+  /**
+   * Type MongoDB documents representation.
+   */
   type DBType
 
+  /**
+   * Creates DB object from the List of parsed data.
+   *
+   * @param c Scala macro context
+   * @param dbparts list of key/value pairs. The first parameter is a name of
+   * an object field, and the second one is an expresion to be used as a value.
+   *
+   * @return created object.
+   */
   def createObject(c: Context)(dbparts: List[(String, c.Expr[Any])]): c.Expr[DBType]
+
+  /**
+   * Creates id value.
+   *
+   * @param id 40 character hex number represented as a string.  The string is
+   * already validated, so it only required to wrap it into DB Id
+   * representation.
+   *
+   * @return created id.
+   */
   def createId(c: Context)(id: String): c.Expr[Any]
 
+  /**
+   * This is mq interpolator entry point.
+   */
   def mq_impl(c: Context)(args: c.Expr[Any]*): c.Expr[DBType] = {
     import c.universe._
 
@@ -38,6 +69,9 @@ trait MongoQueryMacro {
     wrapObject(c)(parsed.members, args.map(_.tree).iterator)
   }
 
+  /**
+   * This is mqt interpolator entry point.
+   */
   def mqt_impl[T: c.WeakTypeTag](c: Context): c.Expr[DBType] = {
     import c.universe._
 
@@ -49,7 +83,25 @@ trait MongoQueryMacro {
     wrapObject(c)(parsed.members, argsTrees.iterator)
   }
 
-  private def parse(c: Context)(partsTrees: List[c.Tree], check: Function1[(Member, Any), Either[String, (Member, Any)]]) = {
+  /**
+   * Parses parts provided by interpolator context.
+   *
+   * @param c macro context
+   * @param partsTrees string parts to be parsed. The data is provided as a
+   * parts seprarated by substitutions.  For example:
+   *
+   * {{{
+   * val name = "John Doe"
+   * val age = 42
+   * mq"{ name : $$name, age: $$age }"
+   * }}}
+   *
+   * In this example parts will be: "{ name: ", ", age: " and " }"
+   *
+   * @param check this function is used by mqt to check if the member/value
+   * pair is valid.
+   */
+  protected def parse(c: Context)(partsTrees: List[c.Tree], check: Function1[(Member, Any), Either[String, (Member, Any)]]) = {
     import c.universe._
 
     val parts = partsTrees map { case Literal(Constant(s: String)) => s }
@@ -70,7 +122,13 @@ trait MongoQueryMacro {
     }
   }
 
-  private def wrapValue(c: Context)(value: Any, args: Iterator[c.Tree]): c.Expr[Any] = {
+  /**
+   * Wraps values.
+   *
+   * This method is required to insert arguments between parts, wrap inlined
+   * ids, nested objects and lists.
+   */
+  protected def wrapValue(c: Context)(value: Any, args: Iterator[c.Tree]): c.Expr[Any] = {
     import c.universe._
     value match {
       case BSON.Placeholder => c.Expr(args.next())
@@ -83,7 +141,10 @@ trait MongoQueryMacro {
     }
   }
 
-  private def wrapObject(c: Context)(parts: List[(LValue, Any)], args: Iterator[c.Tree]): c.Expr[DBType] = {
+  /**
+   * Wraps object into DBType.
+   */
+  protected def wrapObject(c: Context)(parts: List[(LValue, Any)], args: Iterator[c.Tree]): c.Expr[DBType] = {
     val dbparts = parts.map {
       case (lv, v) => (lv.asString, wrapValue(c)(v, args))
     }
