@@ -18,9 +18,8 @@ package com.github.limansky.mongoquery.core
 
 import MacroContext.Context
 import bsonparser.Parser
-import scala.language.experimental.macros
-import com.github.limansky.mongoquery.core.BSON.Member
-import com.github.limansky.mongoquery.core.BSON.LValue
+import bsonparser.Parser.Validator
+import BSON.{ Member, LValue }
 
 /**
  * Base macro implemenation without dependency to any MongoDB driver.
@@ -101,7 +100,7 @@ trait MongoQueryMacro {
    * @param check this function is used by mqt to check if the member/value
    * pair is valid.
    */
-  protected def parse(c: Context)(partsTrees: List[c.Tree], check: Function1[(Member, Any), Either[String, (Member, Any)]]) = {
+  protected def parse(c: Context)(partsTrees: List[c.Tree], check: Validator) = {
     import c.universe._
 
     val parts = partsTrees map { case Literal(Constant(s: String)) => s }
