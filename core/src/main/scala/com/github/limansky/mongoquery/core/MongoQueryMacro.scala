@@ -76,7 +76,7 @@ trait MongoQueryMacro {
 
     val analyzer = new TypeInfoAnalyzer[c.type](c)
 
-    val Apply(Select(Apply(_, List(Apply(_, partsTrees))), _), argsTrees) = c.prefix.tree
+    val q"$cn(scala.StringContext.apply(..$partsTrees)).mqt(..$argsTrees)" = c.prefix.tree
     val parsed = parse(c)(partsTrees, analyzer.check(c.weakTypeOf[T]))
 
     wrapObject(c)(parsed.members, argsTrees.iterator)
