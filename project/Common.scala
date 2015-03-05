@@ -4,8 +4,8 @@ import sbt.Keys._
 object Common {
   val settings = Seq(
     version := "0.5-SNAPSHOT",
-    scalaVersion := "2.11.5",
-    crossScalaVersions := Seq("2.11.5", "2.10.4"),
+    scalaVersion := "2.11.6",
+    crossScalaVersions := Seq("2.11.6", "2.10.5"),
     scalacOptions ++= Seq("-deprecation", "-unchecked", "-feature"),
     libraryDependencies <++= scalaVersion { sv =>
       CrossVersion.partialVersion(sv) match {
