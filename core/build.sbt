@@ -18,14 +18,10 @@ libraryDependencies ++= Seq(
   "org.scala-lang"  %  "scala-compiler"     % scalaVersion.value    % "test"
 )
 
-unmanagedSourceDirectories in Compile <+= (scalaBinaryVersion, sourceDirectory in Compile) { (v, d) =>
-  d / s"scala_$v"
-}
-
 Publish.settings
 
 scalariformSettings
 
 sourceDirectories in (Compile, format) <+= (scalaBinaryVersion, sourceDirectory in Compile) { (v, d) =>
-  d / s"scala_$v"
+  d / s"scala-$v"
 }
