@@ -98,7 +98,7 @@ class Parser(memberValidator: Parser.Validator) extends StdTokenParsers {
 
   def fields: Parser[Member] = elem("fields", _.isInstanceOf[FieldLit]) ^^ { case FieldLit(p) => Member(p) }
 
-  def array: Parser[List[Any]] = ("[" ~> repsep(value, ",") <~ "]")
+  def array: Parser[List[Any]] = "[" ~> repsep(value, ",") <~ "]"
 
   def fldMember: Parser[(LValue, Any)] = fields ~ ":" ~ (value | variable) ^^ {
     case i ~ _ ~ v => memberValidator(i, v)
@@ -109,18 +109,18 @@ class Parser(memberValidator: Parser.Validator) extends StdTokenParsers {
     e => e.left.get
   )
 
-  def opMemeber: Parser[(LValue, Any)] = operator ~ ":" ~ (value | variable) ^^ {
+  def opMember: Parser[(LValue, Any)] = operator ~ ":" ~ (value | variable) ^^ {
     case o ~ _ ~ v => (o, v)
   }
 
-  def member = fldMember | opMemeber
+  def member = fldMember | opMember
 
   def obj: Parser[Object] = "{" ~> repsep(member, ",") <~ "}" ^^ Object
 
-  override def accept(e: Elem): Parser[Elem] = acceptIf(_ == e)(_ match {
+  override def accept(e: Elem): Parser[Elem] = acceptIf(_ == e) {
     case lexical.ErrorToken(c) => c.stripPrefix("*** error: ")
     case in => "" + e + " expected, but " + in + " found"
-  })
+  }
 
   def parse(expr: String): ParseResult[Object] = {
     phrase(obj)(new lexical.Scanner(expr))

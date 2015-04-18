@@ -19,7 +19,7 @@ package com.github.limansky.mongoquery.core
 import MacroContext.Context
 import bsonparser.Parser
 import bsonparser.Parser.Validator
-import BSON.{ Member, LValue }
+import BSON.LValue
 
 /**
  * Base macro implemenation without dependency to any MongoDB driver.
@@ -39,7 +39,7 @@ trait MongoQueryMacro {
    *
    * @param c Scala macro context
    * @param dbparts list of key/value pairs. The first parameter is a name of
-   * an object field, and the second one is an expresion to be used as a value.
+   * an object field, and the second one is an expression to be used as a value.
    *
    * @return created object.
    */
@@ -65,7 +65,7 @@ trait MongoQueryMacro {
     val Apply(_, List(Apply(_, partsTrees))) = c.prefix.tree
 
     val parsed = parse(c)(partsTrees, v => Right(v))
-    wrapObject(c)(parsed.members, args.map(_.tree).iterator)
+    wrapObject(c)(parsed.members, args.iterator)
   }
 
   /**
@@ -77,9 +77,11 @@ trait MongoQueryMacro {
     val analyzer = new TypeInfoAnalyzer[c.type](c)
 
     val q"$cn(scala.StringContext.apply(..$partsTrees)).mqt(..$argsTrees)" = c.prefix.tree
+    val args = argsTrees.map(c.Expr(_))
+    val types = args.map(_.actualType)
     val parsed = parse(c)(partsTrees, analyzer.check(c.weakTypeOf[T]))
 
-    wrapObject(c)(parsed.members, argsTrees.iterator)
+    wrapObject(c)(parsed.members, args.iterator)
   }
 
   /**
@@ -127,10 +129,10 @@ trait MongoQueryMacro {
    * This method is required to insert arguments between parts, wrap inlined
    * ids, nested objects and lists.
    */
-  protected def wrapValue(c: Context)(value: Any, args: Iterator[c.Tree]): c.Expr[Any] = {
+  protected def wrapValue(c: Context)(value: Any, args: Iterator[c.Expr[_]]): c.Expr[Any] = {
     import c.universe._
     value match {
-      case BSON.Placeholder => c.Expr(args.next())
+      case BSON.Placeholder => c.Expr(args.next().tree)
       case BSON.Object(m) => wrapObject(c)(m, args)
       case BSON.Id(id) => createId(c)(id)
       case a: List[_] =>
@@ -143,7 +145,7 @@ trait MongoQueryMacro {
   /**
    * Wraps object into DBType.
    */
-  protected def wrapObject(c: Context)(parts: List[(LValue, Any)], args: Iterator[c.Tree]): c.Expr[DBType] = {
+  protected def wrapObject(c: Context)(parts: List[(LValue, Any)], args: Iterator[c.Expr[_]]): c.Expr[DBType] = {
     val dbparts = parts.map {
       case (lv, v) => (lv.asString, wrapValue(c)(v, args))
     }
