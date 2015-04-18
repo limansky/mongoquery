@@ -14,7 +14,7 @@ libraryDependencies <++= scalaVersion { sv =>
 }
 
 libraryDependencies ++= Seq(
-  "org.scalacheck"  %% "scalacheck"         % "1.12.1"              % "test",
+  "org.scalacheck"  %% "scalacheck"         % "1.12.2"              % "test",
   "org.scala-lang"  %  "scala-compiler"     % scalaVersion.value    % "test"
 )
 
