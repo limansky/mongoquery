@@ -46,12 +46,10 @@ abstract class CompileErrorsTest extends FlatSpec with Matchers with TableDriven
   )
 
   def checkError(q: String, m: String) = {
-    try {
+    val e = intercept[ToolBoxError] {
       tb.eval(tb.parse(wi(q)))
-    } catch {
-      case e: ToolBoxError =>
-        e.message should include(m)
     }
+    e.message should include(m)
   }
 
   "mq" should "fail on malformed BSON" in {
