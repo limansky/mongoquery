@@ -25,7 +25,7 @@ object Parser {
   type Validator = ((Member, Any)) => ValidationResult
 }
 
-class Parser(memberValidator: Parser.Validator) extends StdTokenParsers {
+class Parser extends StdTokenParsers {
 
   import com.github.limansky.mongoquery.core.BSON._
 
@@ -74,7 +74,7 @@ class Parser(memberValidator: Parser.Validator) extends StdTokenParsers {
 
   import lexical._
 
-  def value: Parser[Any] = id | stringLit | int | double | boolean | nullLit | array | obj
+  def value: Parser[Any] = id | stringLit | int | double | boolean | nullLit | array | obj | variable
 
   def operator: Parser[Operator] = elem("operator", _.isInstanceOf[OperatorLit]) ^^ (o => Operator(o.chars))
 
@@ -100,20 +100,9 @@ class Parser(memberValidator: Parser.Validator) extends StdTokenParsers {
 
   def array: Parser[List[Any]] = "[" ~> repsep(value, ",") <~ "]"
 
-  def fldMember: Parser[(LValue, Any)] = fields ~ ":" ~ (value | variable) ^^ {
-    case i ~ _ ~ v => memberValidator(i, v)
-  } ^? (
-    {
-      case Right((i, v)) => (i, v)
-    },
-    e => e.left.get
-  )
-
-  def opMember: Parser[(LValue, Any)] = operator ~ ":" ~ (value | variable) ^^ {
-    case o ~ _ ~ v => (o, v)
+  def member: Parser[(LValue, Any)] = (fields | operator) ~ ":" ~ value ^^ {
+    case i ~ _ ~ v => (i, v)
   }
-
-  def member = fldMember | opMember
 
   def obj: Parser[Object] = "{" ~> repsep(member, ",") <~ "}" ^^ Object
 

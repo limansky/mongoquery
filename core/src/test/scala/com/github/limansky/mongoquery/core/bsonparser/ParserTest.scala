@@ -24,7 +24,7 @@ class ParserTest extends FlatSpec with Matchers with GeneratorDrivenPropertyChec
 
   import com.github.limansky.mongoquery.core.BSON._
 
-  object TestParser extends Parser(v => Right(v))
+  object TestParser extends Parser
 
   def parseValue(s: String): Any = {
     TestParser.phrase(TestParser.value)(new TestParser.lexical.Scanner(s)) match {

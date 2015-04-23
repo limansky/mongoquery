@@ -19,11 +19,13 @@ package com.github.limansky.mongoquery.core
 import MacroContext.Context
 import BSON.{ Member, IndexedField, IdentPart }
 import bsonparser.Parser.ValidationResult
+import scala.annotation.tailrec
 
 class TypeInfoAnalyzer[C <: Context](override val c: C) extends TypeInfoAnalyzerBase(c) {
 
   import c.universe._
 
+  @tailrec
   private def doCheck(pair: (Member, Any), tpe: c.Type, parts: List[IdentPart]): ValidationResult = {
 
     val t = getEffectiveType(tpe)
@@ -47,7 +49,7 @@ class TypeInfoAnalyzer[C <: Context](override val c: C) extends TypeInfoAnalyzer
     }
   }
 
-  def check(tpe: c.Type)(pair: (Member, Any)): Either[String, (Member, Any)] = {
+  def check(tpe: c.Type)(pair: (Member, Any)): ValidationResult = {
     doCheck(pair, tpe, pair._1.fields)
   }
 }

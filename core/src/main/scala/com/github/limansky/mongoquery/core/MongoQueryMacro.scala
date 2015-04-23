@@ -19,7 +19,7 @@ package com.github.limansky.mongoquery.core
 import MacroContext.Context
 import bsonparser.Parser
 import bsonparser.Parser.Validator
-import BSON.LValue
+import BSON.{ LValue, Member }
 
 /**
  * Base macro implemenation without dependency to any MongoDB driver.
@@ -64,7 +64,7 @@ trait MongoQueryMacro {
 
     val Apply(_, List(Apply(_, partsTrees))) = c.prefix.tree
 
-    val parsed = parse(c)(partsTrees, v => Right(v))
+    val parsed = parse(c)(partsTrees)
     wrapObject(c)(parsed.members, args.iterator)
   }
 
@@ -79,7 +79,23 @@ trait MongoQueryMacro {
     val q"$cn(scala.StringContext.apply(..$partsTrees)).mqt(..$argsTrees)" = c.prefix.tree
     val args = argsTrees.map(c.Expr(_))
     val types = args.map(_.actualType)
-    val parsed = parse(c)(partsTrees, analyzer.check(c.weakTypeOf[T]))
+    val parsed = parse(c)(partsTrees)
+
+    val errors = parsed.members.foldLeft(List.empty[String]) {
+      case (e, p) =>
+        p match {
+          case (m: Member, v) =>
+            analyzer.check(c.weakTypeOf[T])((m, v)) match {
+              case Left(msg) => msg :: e
+              case _ => e
+            }
+          case _ => e
+        }
+    }
+
+    if (errors.nonEmpty) {
+      c.abort(c.enclosingPosition, errors.mkString(","))
+    }
 
     wrapObject(c)(parsed.members, args.iterator)
   }
@@ -102,16 +118,17 @@ trait MongoQueryMacro {
    * @param check this function is used by mqt to check if the member/value
    * pair is valid.
    */
-  protected def parse(c: Context)(partsTrees: List[c.Tree], check: Validator) = {
+  protected def parse(c: Context)(partsTrees: List[c.Tree]): BSON.Object = {
     import c.universe._
 
     val parts = partsTrees map { case Literal(Constant(s: String)) => s }
     val positions = partsTrees.map(_.pos)
 
-    val parser = new Parser(check)
+    val parser = new Parser
 
     parser.parse(parts) match {
       case parser.Success(obj, _) => obj
+
       case parser.NoSuccess(msg, r) =>
         val partIndex = if (r.isInstanceOf[parser.lexical.Scanner]) {
           r.asInstanceOf[parser.lexical.Scanner].part
