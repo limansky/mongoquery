@@ -16,8 +16,8 @@
 
 package com.github.limansky.mongoquery.casbah
 
-import com.github.limansky.mongoquery.core.MongoQueryMacro
 import com.github.limansky.mongoquery.core.MacroContext.Context
+import com.github.limansky.mongoquery.core.MongoQueryMacro
 import com.mongodb.DBObject
 
 /**

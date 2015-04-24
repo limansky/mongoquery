@@ -16,13 +16,11 @@
 
 package com.github.limansky.mongoquery.core.bsonparser
 
+import com.github.limansky.mongoquery.core.BSON.{Field, IdentPart, IndexedField}
+
+import scala.collection.mutable
 import scala.util.parsing.combinator.lexical.StdLexical
 import scala.util.parsing.input.Reader
-import scala.util.parsing.input.CharArrayReader
-import scala.collection.mutable
-import com.github.limansky.mongoquery.core.BSON.IndexedField
-import com.github.limansky.mongoquery.core.BSON.Field
-import com.github.limansky.mongoquery.core.BSON.IdentPart
 
 class Lexical extends StdLexical with BSONTokens {
 
@@ -65,7 +63,7 @@ class Lexical extends StdLexical with BSONTokens {
       case o if operators.contains(o) => OperatorLit(o)
     },
     u => {
-      val p = operators.map(o => (o, Utils.levenshtein(u, o))).minBy(_._2)._1
+      val p = operators.minBy(o => Utils.levenshtein(u, o))
       s"Unknown operator '$u'. Possible you mean '$p'"
     }
   )

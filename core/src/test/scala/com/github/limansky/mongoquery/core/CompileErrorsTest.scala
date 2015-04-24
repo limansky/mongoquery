@@ -16,14 +16,14 @@
 
 package com.github.limansky.mongoquery.core
 
-import org.scalatest.FlatSpec
-import org.scalatest.Matchers
-import scala.reflect.runtime.{ universe => ru }
-import scala.tools.reflect.ToolBox
-import scala.tools.reflect.ToolBoxError
-import java.net.URLClassLoader
 import java.io.File
+import java.net.URLClassLoader
+
+import org.scalatest.{FlatSpec, Matchers}
 import org.scalatest.prop.TableDrivenPropertyChecks
+
+import scala.reflect.runtime.{universe => ru}
+import scala.tools.reflect.{ToolBox, ToolBoxError}
 
 abstract class CompileErrorsTest extends FlatSpec with Matchers with TableDrivenPropertyChecks {
 

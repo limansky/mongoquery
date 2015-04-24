@@ -16,12 +16,10 @@
 
 package com.github.limansky.mongoquery.reactive
 
-import org.scalatest.FlatSpec
-import org.scalatest.Matchers
-import reactivemongo.bson.BSONDocument
-import reactivemongo.bson.BSONObjectID
 import java.util.Date
-import reactivemongo.bson.BSONDateTime
+
+import org.scalatest.{FlatSpec, Matchers}
+import reactivemongo.bson.{BSONDateTime, BSONDocument, BSONObjectID}
 
 class ReactiveHelperTest extends FlatSpec with Matchers {
 

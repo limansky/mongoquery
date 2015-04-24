@@ -16,8 +16,9 @@
 
 package com.github.limansky.mongoquery
 
-import scala.language.experimental.macros
 import com.mongodb.DBObject
+
+import scala.language.experimental.macros
 
 package object casbah {
 

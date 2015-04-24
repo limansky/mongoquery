@@ -16,7 +16,7 @@
 
 package com.github.limansky.mongoquery.core
 
-import MacroContext.Context
+import com.github.limansky.mongoquery.core.MacroContext.Context
 
 abstract class TypeInfoAnalyzerBase[C <: Context](val c: C) {
 

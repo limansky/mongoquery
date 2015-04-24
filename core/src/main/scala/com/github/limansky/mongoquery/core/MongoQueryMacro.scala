@@ -16,10 +16,9 @@
 
 package com.github.limansky.mongoquery.core
 
-import MacroContext.Context
-import bsonparser.Parser
-import bsonparser.Parser.Validator
-import BSON.{ LValue, Member }
+import com.github.limansky.mongoquery.core.BSON.{LValue, Member}
+import com.github.limansky.mongoquery.core.MacroContext.Context
+import com.github.limansky.mongoquery.core.bsonparser.Parser
 
 /**
  * Base macro implemenation without dependency to any MongoDB driver.

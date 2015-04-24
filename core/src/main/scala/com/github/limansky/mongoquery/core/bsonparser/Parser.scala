@@ -16,9 +16,10 @@
 
 package com.github.limansky.mongoquery.core.bsonparser
 
+import com.github.limansky.mongoquery.core.BSON.Member
+
 import scala.util.parsing.combinator.syntactical.StdTokenParsers
 import scala.util.parsing.input.CharArrayReader
-import com.github.limansky.mongoquery.core.BSON.Member
 
 object Parser {
   type ValidationResult = Either[String, (Member, Any)]

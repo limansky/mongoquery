@@ -16,8 +16,8 @@
 
 package com.github.limansky.mongoquery.reactive
 
-import com.github.limansky.mongoquery.core.MongoQueryMacro
 import com.github.limansky.mongoquery.core.MacroContext.Context
+import com.github.limansky.mongoquery.core.MongoQueryMacro
 import reactivemongo.bson.BSONDocument
 
 /**

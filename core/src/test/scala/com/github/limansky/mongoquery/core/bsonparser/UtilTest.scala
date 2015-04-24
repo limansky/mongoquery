@@ -15,10 +15,8 @@
  */
 package com.github.limansky.mongoquery.core.bsonparser
 
-import org.scalatest.FlatSpec
-import org.scalatest.Matchers
-import org.scalatest.prop.GeneratorDrivenPropertyChecks
-import org.scalatest.prop.TableDrivenPropertyChecks
+import org.scalatest.{FlatSpec, Matchers}
+import org.scalatest.prop.{GeneratorDrivenPropertyChecks, TableDrivenPropertyChecks}
 
 class UtilTest extends FlatSpec with Matchers
     with GeneratorDrivenPropertyChecks

@@ -16,8 +16,9 @@
 
 package com.github.limansky.mongoquery
 
-import scala.language.experimental.macros
 import _root_.reactivemongo.bson.BSONDocument
+
+import scala.language.experimental.macros
 
 package object reactive {
 

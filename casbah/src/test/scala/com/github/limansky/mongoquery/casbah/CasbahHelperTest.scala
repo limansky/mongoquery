@@ -16,11 +16,11 @@
 
 package com.github.limansky.mongoquery.casbah
 
-import org.scalatest.FlatSpec
-import com.mongodb.casbah.Imports._
-import org.scalatest.Matchers
-import org.bson.types.ObjectId
 import java.util.Date
+
+import com.mongodb.casbah.Imports._
+import org.bson.types.ObjectId
+import org.scalatest.{FlatSpec, Matchers}
 
 class CasbahHelperTest extends FlatSpec with Matchers {
 
