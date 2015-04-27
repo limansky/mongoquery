@@ -16,11 +16,15 @@
 
 package com.github.limansky.mongoquery.core
 
-import com.github.limansky.mongoquery.core.BSON.{IdentPart, IndexedField, Member}
+import com.github.limansky.mongoquery.core.BSON.{ IdentPart, IndexedField, Member }
 import com.github.limansky.mongoquery.core.MacroContext.Context
-import com.github.limansky.mongoquery.core.bsonparser.Parser.ValidationResult
+import com.github.limansky.mongoquery.core.TypeInfoAnalyzer.ValidationResult
 
 import scala.annotation.tailrec
+
+object TypeInfoAnalyzer {
+  type ValidationResult = Either[String, (Member, Any)]
+}
 
 class TypeInfoAnalyzer[C <: Context](override val c: C) extends TypeInfoAnalyzerBase(c) {
 

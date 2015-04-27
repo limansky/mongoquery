@@ -21,11 +21,6 @@ import com.github.limansky.mongoquery.core.BSON.Member
 import scala.util.parsing.combinator.syntactical.StdTokenParsers
 import scala.util.parsing.input.CharArrayReader
 
-object Parser {
-  type ValidationResult = Either[String, (Member, Any)]
-  type Validator = ((Member, Any)) => ValidationResult
-}
-
 class Parser extends StdTokenParsers {
 
   import com.github.limansky.mongoquery.core.BSON._

@@ -16,7 +16,7 @@
 
 package com.github.limansky.mongoquery.core
 
-import com.github.limansky.mongoquery.core.BSON.{LValue, Member}
+import com.github.limansky.mongoquery.core.BSON.{ LValue, Member }
 import com.github.limansky.mongoquery.core.MacroContext.Context
 import com.github.limansky.mongoquery.core.bsonparser.Parser
 
@@ -37,12 +37,12 @@ trait MongoQueryMacro {
    * Creates DB object from the List of parsed data.
    *
    * @param c Scala macro context
-   * @param dbparts list of key/value pairs. The first parameter is a name of
+   * @param dbParts list of key/value pairs. The first parameter is a name of
    * an object field, and the second one is an expression to be used as a value.
    *
    * @return created object.
    */
-  def createObject(c: Context)(dbparts: List[(String, c.Expr[Any])]): c.Expr[DBType]
+  def createObject(c: Context)(dbParts: List[(String, c.Expr[Any])]): c.Expr[DBType]
 
   /**
    * Creates id value.
@@ -113,9 +113,6 @@ trait MongoQueryMacro {
    * }}}
    *
    * In this example parts will be: "{ name: ", ", age: " and " }"
-   *
-   * @param check this function is used by mqt to check if the member/value
-   * pair is valid.
    */
   protected def parse(c: Context)(partsTrees: List[c.Tree]): BSON.Object = {
     import c.universe._
@@ -129,10 +126,11 @@ trait MongoQueryMacro {
       case parser.Success(obj, _) => obj
 
       case parser.NoSuccess(msg, r) =>
-        val partIndex = if (r.isInstanceOf[parser.lexical.Scanner]) {
-          r.asInstanceOf[parser.lexical.Scanner].part
-        } else {
-          0
+        val partIndex = r match {
+          case scanner: parser.lexical.Scanner =>
+            scanner.part
+          case _ =>
+            0
         }
         val part = positions(partIndex)
         c.abort(part.withPoint(part.point + r.offset), msg)
