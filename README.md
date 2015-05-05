@@ -43,6 +43,14 @@ collection.
 })
 ```
 
+For [Tepkin][] (experimental, since 0.5-SNAPSHOT) `mq` creates `BsonDocument`s:
+
+```Scala
+import com.github.limansky.mongoquery.tepkin._
+
+val source = collection.find(mq"{ firstName : 'Jack' }")
+```
+
 Since the query is defined inside of the string interpolator, the words started
 with `$` are handled as variable references.  To type MongoDB operator use `$$`, e.g:
 
@@ -122,4 +130,5 @@ Any feedback is very welcome!  You can ask any questions in [MongoQuery mailing 
 [MongoDB]: http://www.mongodb.org/
 [Casbah]: https://github.com/mongodb/casbah
 [ReactiveMongo]: http://reactivemongo.org/
+[Tepkin]: https://github.com/fehmicansaglam/tepkin
 [maillist]: https://groups.google.com/forum/#!forum/mongoquery-users
