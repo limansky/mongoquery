@@ -42,4 +42,9 @@ object TepkinMacro extends MongoQueryMacro {
     val hex = Converters.str2Hex(id)
     c.Expr(q"new net.fehmicansaglam.bson.Implicits.BsonValueObjectId($hex)")
   }
+
+  override def createArray(c: Context)(items: List[c.Expr[Any]]): c.Expr[Any] = {
+    import c.universe._
+    c.Expr(q"net.fehmicansaglam.bson.BsonDsl.$$array(..$items)")
+  }
 }

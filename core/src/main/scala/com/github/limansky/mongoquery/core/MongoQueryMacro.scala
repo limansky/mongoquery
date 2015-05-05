@@ -55,6 +55,11 @@ trait MongoQueryMacro {
    */
   def createId(c: Context)(id: String): c.Expr[Any]
 
+  def createArray(c: Context)(items: List[c.Expr[Any]]): c.Expr[Any] = {
+    import c.universe._
+    c.Expr(q"List(..$items)")
+  }
+
   /**
    * This is mq interpolator entry point.
    */
@@ -151,7 +156,7 @@ trait MongoQueryMacro {
       case BSON.Id(id) => createId(c)(id)
       case a: List[_] =>
         val wrapped = a.map(i => wrapValue(c)(i, args))
-        c.Expr[List[Any]](q"List(..$wrapped)")
+        createArray(c)(wrapped)
       case v => c.Expr[Any](Literal(Constant(v)))
     }
   }
