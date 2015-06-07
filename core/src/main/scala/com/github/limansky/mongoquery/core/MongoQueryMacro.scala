@@ -118,7 +118,6 @@ trait MongoQueryMacro {
     import c.universe._
 
     val parts = partsTrees map { case Literal(Constant(s: String)) => s }
-    val positions = partsTrees.map(_.pos)
 
     val parser = new Parser
 
@@ -132,8 +131,8 @@ trait MongoQueryMacro {
           case _ =>
             0
         }
-        val part = positions(partIndex)
-        c.abort(part.withPoint(part.point + r.offset), msg)
+        val pos = partsTrees(partIndex).pos
+        c.abort(pos.withPoint(pos.point + r.offset), msg)
     }
   }
 
