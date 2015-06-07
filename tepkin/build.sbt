@@ -7,7 +7,7 @@ resolvers ++= Seq(
   Resolver.typesafeRepo("snapshots")
 )
 
-libraryDependencies += "net.fehmicansaglam" %% "tepkin" % "0.5-SNAPSHOT"
+libraryDependencies += "net.fehmicansaglam" %% "tepkin" % "0.5"
 
 Publish.settings
 
