@@ -7,7 +7,7 @@ Common.settings
 libraryDependencies <++= scalaVersion { sv =>
   CrossVersion.partialVersion(sv) match {
     case Some((2, v)) if v >= 11 => Seq(
-      "org.scala-lang.modules"  %% "scala-parser-combinators" % "1.0.3"
+      "org.scala-lang.modules"  %% "scala-parser-combinators" % "1.0.4"
     )
     case _ => Nil
   }
