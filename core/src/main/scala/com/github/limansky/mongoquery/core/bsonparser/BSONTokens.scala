@@ -26,6 +26,10 @@ trait BSONTokens extends StdTokens {
 
   case class OperatorLit(chars: String) extends Token
 
+  case class RegexLit(expression: String, options: String) extends Token {
+    override val chars = s"/$expression/$options"
+  }
+
   case object Variable extends Token {
     override val chars = "variable"
   }

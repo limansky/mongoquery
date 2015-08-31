@@ -17,7 +17,6 @@
 package com.github.limansky.mongoquery.core.bsonparser
 
 import com.github.limansky.mongoquery.core.BSON.Member
-
 import scala.util.parsing.combinator.syntactical.StdTokenParsers
 import scala.util.parsing.input.CharArrayReader
 
@@ -70,7 +69,7 @@ class Parser extends StdTokenParsers {
 
   import lexical._
 
-  def value: Parser[Any] = id | stringLit | int | double | boolean | nullLit | array | obj | variable
+  def value: Parser[Any] = id | regexLit | stringLit | int | double | boolean | nullLit | array | obj | variable
 
   def operator: Parser[Operator] = elem("operator", _.isInstanceOf[OperatorLit]) ^^ (o => Operator(o.chars))
 
@@ -91,6 +90,8 @@ class Parser extends StdTokenParsers {
   def objectIdValue = acceptIf(t => t.isInstanceOf[StringLit] && t.chars.length() == 24 && t.chars.forall(hexDigits.contains))(t => "Invalid object id: " + t.chars) ^^ (v => v.chars)
 
   def id: Parser[Id] = keyword("ObjectId") ~> "(" ~> objectIdValue <~ ")" ^^ Id
+
+  def regexLit: Parser[Regex] = elem("regex", _.isInstanceOf[RegexLit]) ^^ { case RegexLit(e, o) => Regex(e, o) }
 
   def fields: Parser[Member] = elem("fields", _.isInstanceOf[FieldLit]) ^^ { case FieldLit(p) => Member(p) }
 

@@ -40,4 +40,10 @@ object ReactiveMacro extends MongoQueryMacro {
     import c.universe._
     c.Expr(q"reactivemongo.bson.BSONObjectID($id)")
   }
+
+  override def createRegex(c: Context)(expression: String, options: String): c.Expr[Any] = {
+    import c.universe._
+
+    c.Expr(q"reactivemongo.bson.BSONRegex($expression, $options)")
+  }
 }

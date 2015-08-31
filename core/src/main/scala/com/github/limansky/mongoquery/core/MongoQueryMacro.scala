@@ -47,6 +47,8 @@ trait MongoQueryMacro {
   /**
    * Creates id value.
    *
+   * @param c Scala macro context
+   *
    * @param id 40 character hex number represented as a string.  The string is
    * already validated, so it only required to wrap it into DB Id
    * representation.
@@ -54,6 +56,18 @@ trait MongoQueryMacro {
    * @return created id.
    */
   def createId(c: Context)(id: String): c.Expr[Any]
+
+  /**
+   * Creates regex literal.
+   *
+   * @param c Scala macro context
+   *
+   * @param expression regular expression to be wrapped.
+   * @param expression options.
+   *
+   * @return created regex.
+   */
+  def createRegex(c: Context)(expression: String, options: String): c.Expr[Any]
 
   /**
    * This is mq interpolator entry point.
@@ -148,6 +162,7 @@ trait MongoQueryMacro {
       case BSON.Placeholder => c.Expr(args.next().tree)
       case BSON.Object(m) => wrapObject(c)(m, args)
       case BSON.Id(id) => createId(c)(id)
+      case BSON.Regex(r, opt) => createRegex(c)(r, opt)
       case a: List[_] =>
         val wrapped = a.map(i => wrapValue(c)(i, args))
         c.Expr[List[Any]](q"List(..$wrapped)")

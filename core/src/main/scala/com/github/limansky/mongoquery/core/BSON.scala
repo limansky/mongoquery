@@ -21,6 +21,7 @@ object BSON {
   case class Object(members: List[(LValue, Any)])
   case class Id(id: String)
   case class DateTime(l: Long)
+  case class Regex(expression: String, options: String)
 
   sealed abstract class IdentPart(val name: String)
 

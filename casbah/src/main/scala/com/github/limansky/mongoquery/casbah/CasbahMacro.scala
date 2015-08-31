@@ -40,4 +40,9 @@ object CasbahMacro extends MongoQueryMacro {
     import c.universe._
     c.Expr(q"new org.bson.types.ObjectId($id)")
   }
+
+  override def createRegex(c: Context)(expression: String, options: String): c.Expr[Any] = {
+    import c.universe._
+    c.Expr(q"$expression.r")
+  }
 }

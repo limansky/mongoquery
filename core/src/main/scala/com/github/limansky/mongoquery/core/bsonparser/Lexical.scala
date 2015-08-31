@@ -16,7 +16,9 @@
 
 package com.github.limansky.mongoquery.core.bsonparser
 
-import com.github.limansky.mongoquery.core.BSON.{Field, IdentPart, IndexedField}
+import com.github.limansky.mongoquery.core.BSON.{ Field, IdentPart, IndexedField }
+
+import scala.util.parsing.input.CharArrayReader.EofCh
 
 import scala.collection.mutable
 import scala.util.parsing.combinator.lexical.StdLexical
@@ -32,6 +34,7 @@ class Lexical extends StdLexical with BSONTokens {
     float ^^ DoubleLit
     | '-' ~> number ^^ { case n => NumericLit('-' + n) }
     | knownOperator
+    | regex
     | ident ^^ wrapIdent
     | super.token
   )
@@ -77,6 +80,14 @@ class Lexical extends StdLexical with BSONTokens {
   def field = fieldName ^^ Field
 
   def fieldName = identChar ~ rep(identChar | digit) ^^ { case x ~ xs => (x :: xs).mkString }
+
+  def regexChars = chrExcept(EofCh, '\n', '/')
+
+  def regexOptChars = elem("options", "imxs".contains(_))
+
+  def regex = ('/' ~> rep(regexChars) <~ '/') ~ rep(regexOptChars) ^^ {
+    case rc ~ opt => RegexLit(rc.mkString, opt.mkString)
+  }
 
   def wrapIdent(parts: List[IdentPart]): Token = {
     parts match {

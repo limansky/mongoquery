@@ -20,7 +20,7 @@ import java.util.Date
 
 import com.mongodb.casbah.Imports._
 import org.bson.types.ObjectId
-import org.scalatest.{FlatSpec, Matchers}
+import org.scalatest.{ FlatSpec, Matchers }
 
 class CasbahHelperTest extends FlatSpec with Matchers {
 
@@ -89,6 +89,10 @@ class CasbahHelperTest extends FlatSpec with Matchers {
 
   it should "support empty objects" in {
     mq"{}" should equal(MongoDBObject.empty)
+  }
+
+  it should "handle regular expressions" in {
+    mq"{ s : /^ba/ }" should equal(MongoDBObject("s" -> "^ba".r))
   }
 
   "CasbahHelper mqt implementation" should "pass valid object" in {

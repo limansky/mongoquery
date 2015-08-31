@@ -16,7 +16,7 @@
 
 package com.github.limansky.mongoquery.core.bsonparser
 
-import org.scalatest.{FlatSpec, Matchers}
+import org.scalatest.{ FlatSpec, Matchers }
 import org.scalatest.prop.GeneratorDrivenPropertyChecks
 
 class ParserTest extends FlatSpec with Matchers with GeneratorDrivenPropertyChecks {
@@ -114,5 +114,9 @@ class ParserTest extends FlatSpec with Matchers with GeneratorDrivenPropertyChec
     the[IllegalArgumentException] thrownBy {
       parse("{ $math : { test : 5 }}")
     } should have message ("""Unknown operator '$math'. Possible you mean '$match'""")
+  }
+
+  it should "parse regex literals" in {
+    parse("{ r : /foo/ }") should be(Object(List(fld("r") -> Regex("foo", ""))))
   }
 }
