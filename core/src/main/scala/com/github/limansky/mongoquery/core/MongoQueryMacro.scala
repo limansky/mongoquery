@@ -63,7 +63,7 @@ trait MongoQueryMacro {
    * @param c Scala macro context
    *
    * @param expression regular expression to be wrapped.
-   * @param expression options.
+   * @param options options for this expression.
    *
    * @return created regex.
    */
