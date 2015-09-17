@@ -71,6 +71,14 @@ MongoQuery checks if all MongoDB operators are known.
 Unfortunately, some errors messages does not reflect the error itself.  I'm working
 on it, but it seems like the issue in the Scala Parser Combinators library.
 
+### Built-in types ###
+
+MongoQuery supports several MongoDB specific literal types.
+
+ - ObjectIds. `mq"""{ clientId : ObjectId("01234567890abcdef1234") }"""`
+ - Booleans. `mq"{ expired : false }"`
+ - Regular expressions (since 0.5). `mq"{ name : /^joe/i }"`
+
 ### mqt interpolator ###
 
 `mqt` is another one interpolator adding type checking feature.  If you have a model
