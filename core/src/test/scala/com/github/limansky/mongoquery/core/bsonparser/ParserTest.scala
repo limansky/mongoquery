@@ -68,7 +68,8 @@ class ParserTest extends FlatSpec with Matchers with GeneratorDrivenPropertyChec
 
   it should "parse arrays" in {
     parseValue("[\"String\", 5, 3.14]") should be(
-      List("String", 5, 3.14))
+      List("String", 5, 3.14)
+    )
   }
 
   it should "parse objects" in {
@@ -118,5 +119,12 @@ class ParserTest extends FlatSpec with Matchers with GeneratorDrivenPropertyChec
 
   it should "parse regex literals" in {
     parse("{ r : /foo/ }") should be(Object(List(fld("r") -> Regex("foo", ""))))
+    parse("{ r : /bar/i }") should be(Object(List(fld("r") -> Regex("bar", "i"))))
+  }
+
+  it should "support regex containing slash" in {
+    parse("{ r : /foo\\/bar/ }") should be(Object(List(fld("r") -> Regex("foo\\/bar", ""))))
+    parse("{ t : /^.*\\t/i }") should be(Object(List(fld("t") -> Regex("^.*\\t", "i"))))
+    parse("{ t : /^.*\t/i }") should be(Object(List(fld("t") -> Regex("^.*\t", "i"))))
   }
 }

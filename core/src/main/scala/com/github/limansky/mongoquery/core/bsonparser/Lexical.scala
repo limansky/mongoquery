@@ -81,11 +81,15 @@ class Lexical extends StdLexical with BSONTokens {
 
   def fieldName = identChar ~ rep(identChar | digit) ^^ { case x ~ xs => (x :: xs).mkString }
 
-  def regexChars = chrExcept(EofCh, '\n', '/')
+  def regexChars = chrExcept(EofCh, '\n', '/', '\\')
 
   def regexOptChars = elem("options", "imxs".contains(_))
 
-  def regex = ('/' ~> rep(regexChars) <~ '/') ~ rep(regexOptChars) ^^ {
+  def regexPart = rep1(regexChars) ^^ (_.mkString)
+
+  def escapedChar = '\\' ~> (accept('/') | 'n' | 'r' | 't' | '\\') ^^ ("\\" + _)
+
+  def regex = ('/' ~> rep(regexPart | escapedChar) <~ '/') ~ rep(regexOptChars) ^^ {
     case rc ~ opt => RegexLit(rc.mkString, opt.mkString)
   }
 
