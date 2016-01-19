@@ -24,7 +24,6 @@ object Utils {
         case (del, (rep, ins, b)) =>
           val c = if (a == b) 0 else 1
           min(min(del + 1, ins + 1), rep + c)
-      }
-    ).last
+      }).last
   }
 }

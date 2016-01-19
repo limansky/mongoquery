@@ -5,7 +5,7 @@ object Common {
   val settings = Seq(
     version := "0.5-SNAPSHOT",
     scalaVersion := "2.11.7",
-    crossScalaVersions := Seq("2.11.7", "2.10.5"),
+    crossScalaVersions := Seq("2.11.7", "2.10.6"),
     scalacOptions ++= Seq("-deprecation", "-unchecked", "-feature"),
     libraryDependencies <++= scalaVersion { sv =>
       CrossVersion.partialVersion(sv) match {
@@ -19,7 +19,7 @@ object Common {
     },
     libraryDependencies ++= Seq(
       "org.scala-lang"  %  "scala-reflect"  % scalaVersion.value,
-      "org.scalatest"   %% "scalatest"      % "2.2.4"             % "test"
+      "org.scalatest"   %% "scalatest"      % "2.2.6"             % "test"
     )
   )
 }

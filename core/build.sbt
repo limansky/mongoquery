@@ -1,5 +1,3 @@
-import ScalariformKeys._
-
 name := "mongoquery-core"
 
 Common.settings
@@ -19,9 +17,3 @@ libraryDependencies ++= Seq(
 )
 
 Publish.settings
-
-scalariformSettings
-
-sourceDirectories in (Compile, format) <+= (scalaBinaryVersion, sourceDirectory in Compile) { (v, d) =>
-  d / s"scala-$v"
-}
