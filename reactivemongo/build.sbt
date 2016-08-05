@@ -4,6 +4,6 @@ Common.settings
 
 resolvers += "Typesafe repository" at "http://repo.typesafe.com/typesafe/releases/"
 
-libraryDependencies += "org.reactivemongo" %% "reactivemongo" % "0.11.9" % "provided"
+libraryDependencies += "org.reactivemongo" %% "reactivemongo" % "0.11.11" % "provided"
 
 Publish.settings

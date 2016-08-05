@@ -4,15 +4,15 @@ import sbt._
 object Common {
   val settings = Seq(
     version := "0.5-SNAPSHOT",
-    scalaVersion := "2.11.7",
-    crossScalaVersions := Seq("2.11.7", "2.10.6"),
+    scalaVersion := "2.11.8",
+    crossScalaVersions := Seq("2.11.8", "2.10.6"),
     scalacOptions ++= Seq("-deprecation", "-unchecked", "-feature"),
     libraryDependencies <++= scalaVersion { sv =>
       CrossVersion.partialVersion(sv) match {
         case Some((2, 11)) => Seq()
         case Some((2, 10)) => Seq(
-          compilerPlugin("org.scalamacros" % "paradise" % "2.0.1" cross CrossVersion.full),
-          "org.scalamacros" %% "quasiquotes" % "2.0.1"
+          compilerPlugin("org.scalamacros" % "paradise" % "2.1.0" cross CrossVersion.full),
+          "org.scalamacros" %% "quasiquotes" % "2.1.0"
         )
         case _ => sys.error("Unsupported Scala version")
       }
