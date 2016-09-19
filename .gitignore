@@ -8,3 +8,4 @@ target/
 *.orig
 *.swp
 console.devmode.log
+.idea/**
