@@ -112,7 +112,7 @@ class Parser extends StdTokenParsers {
     phrase(obj)(new lexical.Scanner(expr))
   }
 
-  def parse(parts: List[String]): ParseResult[Object] = {
+  def parse(parts: Seq[String]): ParseResult[Object] = {
     val rs = parts.map(p => new CharArrayReader(p.toCharArray))
     phrase(obj)(new lexical.Scanner(rs))
   }

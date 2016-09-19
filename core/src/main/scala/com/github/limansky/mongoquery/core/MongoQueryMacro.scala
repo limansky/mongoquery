@@ -174,10 +174,10 @@ trait MongoQueryMacro {
    * Wraps object into DBType.
    */
   protected def wrapObject(c: Context)(parts: List[(LValue, Any)], args: Iterator[c.Expr[_]]): c.Expr[DBType] = {
-    val dbparts = parts.map {
+    val dbParts = parts.map {
       case (lv, v) => (lv.asString, wrapValue(c)(v, args))
     }
 
-    createObject(c)(dbparts)
+    createObject(c)(dbParts)
   }
 }

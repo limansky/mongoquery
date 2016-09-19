@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2016 Mike Limansky
+ * Copyright 2016 Mike Limansky
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,21 +14,19 @@
  * limitations under the License.
  */
 
-package com.github.limansky.mongoquery
+package com.github.limansky.mongoquery.casbah
 
+import com.github.limansky.mongoquery.core.MongoQueryParser
 import com.mongodb.DBObject
+import com.mongodb.casbah.commons.MongoDBObject
+import org.bson.types.ObjectId
 
-import scala.language.experimental.macros
+object CasbahParser extends MongoQueryParser {
+  type DbType = DBObject
 
-package object casbah {
+  override def createObject(dbParts: List[(String, Any)]): DBObject = MongoDBObject(dbParts)
 
-  class QueryWrapper {
-    def apply[T]: DBObject = macro CasbahMacro.c_mqt_impl[T]
-  }
+  override def createRegex(expression: String, options: String): Any = expression.r
 
-  implicit class CasbahQueryHelper(val sc: StringContext) extends AnyVal {
-    def mq(args: Any*): DBObject = macro CasbahMacro.c_mq_impl
-
-    def mqt(args: Any*) = new QueryWrapper
-  }
+  override def createId(id: String): Any = new ObjectId(id)
 }

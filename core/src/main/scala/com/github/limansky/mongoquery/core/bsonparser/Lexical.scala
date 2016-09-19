@@ -100,9 +100,9 @@ class Lexical extends StdLexical with BSONTokens {
     }
   }
 
-  class Scanner(s: super.Scanner, readers: List[Reader[Char]], val part: Int) extends Reader[Token] {
+  class Scanner(s: super.Scanner, readers: Seq[Reader[Char]], val part: Int) extends Reader[Token] {
 
-    def this(readers: List[Reader[Char]]) = this(new super.Scanner(readers.head), readers.tail, 0)
+    def this(readers: Seq[Reader[Char]]) = this(new super.Scanner(readers.head), readers.tail, 0)
 
     def this(in: String) = this(new super.Scanner(in), Nil, 0)
 
