@@ -40,7 +40,10 @@ object ReactiveMongoParser {
       case list: List[_] => BSONArray(list.map(wrapValue))
       case s: String => BSONString(s)
       case n: Double => BSONDouble(n)
+      case i: Int => BSONInteger(i)
+      case l: Long => BSONLong(l)
       case b: Boolean => BSONBoolean(b)
+      case null => BSONNull
       case x => throw new IllegalStateException(s"Unsupported value $x")
     }
   }
