@@ -2,7 +2,7 @@ MongoQuery
 ==========
 
 [![Build Status](https://travis-ci.org/limansky/mongoquery.svg?branch=master)](https://travis-ci.org/limansky/mongoquery)
-[![Coverage Status](https://coveralls.io/repos/limansky/mongoquery/badge.png)](https://coveralls.io/r/limansky/mongoquery)
+[![Coverage Status](https://coveralls.io/repos/github/limansky/mongoquery/badge.svg?branch=master)](https://coveralls.io/github/limansky/mongoquery?branch=master)
 
 MongoQuery is a macro based MongoDB query builder for Scala.
 
