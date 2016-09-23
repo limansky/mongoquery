@@ -39,7 +39,7 @@ abstract class CompileErrorsTest extends FlatSpec with Matchers with TableDriven
 
   val malformed = Table(
     ("query", "message"),
-    ("""mq"{ a 1 }"""", "`:' expected, but 1 found"),
+    ("""mq"{ a 1 }"""", "`}' expected, but identifier a found"),
     ("""mq"{ a : 1"""", "end of input"),
     ("""mq"a : 1}"""", "`{' expected, but a found") //,
   //    ("""mq{a : 1 b : "foo"}""", "`,' expected, but b found")  // weird error

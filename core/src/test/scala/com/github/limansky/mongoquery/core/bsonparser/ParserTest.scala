@@ -63,7 +63,7 @@ class ParserTest extends FlatSpec with Matchers with GeneratorDrivenPropertyChec
   }
 
   it should "not allow invalid ObjectIds" in {
-    an[IllegalArgumentException] should be thrownBy (parseValue("ObjectId(\"Hello\")"))
+    an[IllegalArgumentException] should be thrownBy parseValue("ObjectId(\"Hello\")")
   }
 
   it should "parse arrays" in {
@@ -74,6 +74,10 @@ class ParserTest extends FlatSpec with Matchers with GeneratorDrivenPropertyChec
 
   it should "parse objects" in {
     parse("{a : 1, b : 2}") should be(Object(List(fld("a") -> 1, fld("b") -> 2)))
+  }
+
+  it should "allow field names to be quoted" in {
+    parse("{ \"a\" : 1 }") should be(Object(List(fld("a") -> 1)))
   }
 
   it should "parse empty object" in {
@@ -114,7 +118,7 @@ class ParserTest extends FlatSpec with Matchers with GeneratorDrivenPropertyChec
   it should "fail on unknown operators" in {
     the[IllegalArgumentException] thrownBy {
       parse("{ $math : { test : 5 }}")
-    } should have message ("""Unknown operator '$math'. Possible you mean '$match'""")
+    } should have message """Unknown operator '$math'. Possible you mean '$match'"""
   }
 
   it should "parse regex literals" in {

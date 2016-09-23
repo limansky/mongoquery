@@ -32,7 +32,7 @@ class Lexical extends StdLexical with BSONTokens {
 
   override def token = (
     float ^^ DoubleLit
-    | '-' ~> number ^^ { case n => NumericLit('-' + n) }
+    | '-' ~> number ^^ { n => NumericLit('-' + n) }
     | knownOperator
     | regex
     | ident ^^ wrapIdent
@@ -50,7 +50,7 @@ class Lexical extends StdLexical with BSONTokens {
 
   def expFloat = sign ~ number ~ opt('.' ~> number) ~ (elem('e') | 'E') ~ sign ~ number ^^ {
     case s ~ n ~ f ~ e ~ es ~ en =>
-      val fl = f map { case n => '.' + n } getOrElse ""
+      val fl = f map { n => '.' + n } getOrElse ""
       s + n + fl + e + es + en
   }
 
@@ -71,7 +71,9 @@ class Lexical extends StdLexical with BSONTokens {
     }
   )
 
-  def ident = rep1sep(indexedField | field, '.')
+  def ident = (fieldOrIndexed | '"' ~> fieldOrIndexed <~ '"') <~ whitespace <~ ':'
+
+  def fieldOrIndexed = rep1sep(indexedField | field, '.')
 
   def index = ('$' ^^^ "$") | number
 

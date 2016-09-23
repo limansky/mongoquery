@@ -69,7 +69,7 @@ class Parser extends StdTokenParsers {
 
   import lexical._
 
-  def value: Parser[Any] = id | regexLit | stringLit | int | double | boolean | nullLit | array | obj | variable
+  def value: Parser[Any] = id | regexLit | int | double | boolean | nullLit | array | variable | obj | stringLit
 
   def operator: Parser[Operator] = elem("operator", _.isInstanceOf[OperatorLit]) ^^ (o => Operator(o.chars))
 
@@ -97,8 +97,8 @@ class Parser extends StdTokenParsers {
 
   def array: Parser[List[Any]] = "[" ~> repsep(value, ",") <~ "]"
 
-  def member: Parser[(LValue, Any)] = (fields | operator) ~ ":" ~ value ^^ {
-    case i ~ _ ~ v => (i, v)
+  def member: Parser[(LValue, Any)] = (fields | operator <~ ":") ~ value ^^ {
+    case i ~ v => (i, v)
   }
 
   def obj: Parser[Object] = "{" ~> repsep(member, ",") <~ "}" ^^ Object
