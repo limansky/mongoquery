@@ -104,6 +104,18 @@ persons.find(mqt"{ phone.number : '223322' }"[Person])
 persons.find(mqt"{ phone.num : '223322' }"[Person])
 ```
 
+### Runtime parsing ###
+
+MongoQuery also provides runtime parsers for both backends. It might be useful for
+testing purposes, or if you generate queries on runtime, or for converting JSON to
+BSON.  For example:
+
+```Scala
+import com.github.limansky.mongoquery.casbah.BSONParser
+
+persons.find(BSONParser.parse("""{ age : { $lt : 42 }}"""))
+```
+
 Installation
 ------------
 
