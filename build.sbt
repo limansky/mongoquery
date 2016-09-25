@@ -17,7 +17,7 @@ lazy val reactivemongo = (project in file ("reactivemongo"))
   .disablePlugins(CoverallsPlugin)
 
 lazy val commonSettings = Seq(
-  version := "0.5",
+  version := "0.6-SNAPSHOT",
   scalaVersion := "2.11.8",
   crossScalaVersions := Seq("2.11.8", "2.10.6"),
   scalacOptions ++= Seq("-deprecation", "-unchecked", "-feature"),
