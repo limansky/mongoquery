@@ -20,44 +20,49 @@ import com.mongodb.casbah.commons.MongoDBObject
 import org.bson.types.ObjectId
 import org.scalatest.{ FlatSpec, Matchers }
 
-class CasbahParserTest extends FlatSpec with Matchers {
+class BSONParserTest extends FlatSpec with Matchers {
 
   "Casbah parser" should "parse valid BSON" in {
-    CasbahParser.parse("""{ foo: "bar" }""") should equal(MongoDBObject("foo" -> "bar"))
-    CasbahParser.parse("""{ "foo": "bar" }""") should equal(MongoDBObject("foo" -> "bar"))
+    BSONParser.parse("""{ foo: "bar" }""") should equal(MongoDBObject("foo" -> "bar"))
+    BSONParser.parse("""{ "foo": "bar" }""") should equal(MongoDBObject("foo" -> "bar"))
   }
 
   it should "support arrays" in {
-    CasbahParser.parse("""{ list: ["one", "two"], bar : "baz"}""") should equal(MongoDBObject(
+    BSONParser.parse("""{ list: ["one", "two"], bar : "baz"}""") should equal(MongoDBObject(
       "list" -> List("one", "two"),
       "bar" -> "baz"
     ))
   }
 
   it should "support booleans" in {
-    CasbahParser.parse("{ bool : false }") should equal(MongoDBObject("bool" -> false))
+    BSONParser.parse("{ bool : false }") should equal(MongoDBObject("bool" -> false))
   }
 
   it should "support numbers" in {
-    CasbahParser.parse("{ int : 5, double : 5.5 }") should equal(MongoDBObject("int" -> 5, "double" -> 5.5))
+    BSONParser.parse("{ int : 5, double : 5.5 }") should equal(MongoDBObject("int" -> 5, "double" -> 5.5))
   }
 
   it should "support object id" in {
-    CasbahParser.parse("""{ _id : ObjectId("1234567890abcdef12345678") }""") should equal(MongoDBObject(
+    BSONParser.parse("""{ _id : ObjectId("1234567890abcdef12345678") }""") should equal(MongoDBObject(
       "_id" -> new ObjectId("1234567890abcdef12345678")
     ))
   }
 
   it should "support null" in {
-    CasbahParser.parse("{ n : null }") should equal(MongoDBObject("n" -> null))
+    BSONParser.parse("{ n : null }") should equal(MongoDBObject("n" -> null))
   }
 
   it should "support regex" in {
-    CasbahParser.parse("{ r : /abc/ }") should equal(MongoDBObject("r" -> "abc".r))
+    BSONParser.parse("{ r : /abc/ }") should equal(MongoDBObject("r" -> "abc".r))
+  }
+
+  it should "support MongoDB operators" in {
+    import com.mongodb.casbah.Imports._
+    BSONParser.parse("{ age : { $gt : 42 }}") should equal("age" $gt 42)
   }
 
   it should "throw IllegalArgumentException on malformed BSON" in {
-    an[IllegalArgumentException] should be thrownBy CasbahParser.parse("{ foo }")
+    an[IllegalArgumentException] should be thrownBy BSONParser.parse("{ foo }")
   }
 
 }

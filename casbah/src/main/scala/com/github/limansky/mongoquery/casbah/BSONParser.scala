@@ -21,7 +21,7 @@ import com.mongodb.DBObject
 import com.mongodb.casbah.commons.MongoDBObject
 import org.bson.types.ObjectId
 
-object CasbahParser extends MongoQueryParser {
+object BSONParser extends MongoQueryParser {
   type DbType = DBObject
 
   override def createObject(dbParts: List[(String, Any)]): DBObject = MongoDBObject(dbParts)

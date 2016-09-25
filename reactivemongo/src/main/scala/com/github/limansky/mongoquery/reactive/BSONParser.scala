@@ -21,7 +21,7 @@ import com.github.limansky.mongoquery.core.BSON
 import com.github.limansky.mongoquery.core.bsonparser.Parser
 import reactivemongo.bson._
 
-object ReactiveMongoParser {
+object BSONParser {
   def parse(bson: String): BSONDocument = {
     val parser = new Parser
 
