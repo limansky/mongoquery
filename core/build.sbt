@@ -1,7 +1,7 @@
 name := "mongoquery-core"
 
-libraryDependencies <++= scalaVersion { sv =>
-  CrossVersion.partialVersion(sv) match {
+libraryDependencies ++= {
+  CrossVersion.partialVersion(scalaVersion.value) match {
     case Some((2, v)) if v >= 11 => Seq(
       "org.scala-lang.modules"  %% "scala-parser-combinators" % "1.0.4"
     )
