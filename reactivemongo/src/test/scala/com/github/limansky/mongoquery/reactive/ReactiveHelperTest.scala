@@ -73,7 +73,7 @@ class ReactiveHelperTest extends FlatSpec with Matchers {
 
   it should "support BSONObjectIDs literals" in {
     val q = mq"""{ clientId : ObjectId("aabbccddeeff112233445566") }"""
-    q should equal(BSONDocument("clientId" -> BSONObjectID("aabbccddeeff112233445566")))
+    q should equal(BSONDocument("clientId" -> BSONObjectID.parse("aabbccddeeff112233445566").get))
   }
 
   it should "support boolean literals" in {

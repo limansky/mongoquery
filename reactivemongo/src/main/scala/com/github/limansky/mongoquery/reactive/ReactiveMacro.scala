@@ -38,7 +38,7 @@ object ReactiveMacro extends MongoQueryMacro {
 
   override def createId(c: Context)(id: String): c.Expr[Any] = {
     import c.universe._
-    c.Expr(q"reactivemongo.bson.BSONObjectID($id)")
+    c.Expr(q"reactivemongo.bson.BSONObjectID.parse($id).get")
   }
 
   override def createRegex(c: Context)(expression: String, options: String): c.Expr[Any] = {

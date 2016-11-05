@@ -26,7 +26,7 @@ class BSONParserTest extends FlatSpec with Matchers {
 
   it should "support object id" in {
     BSONParser.parse("""{ _id : ObjectId("1234567890abcdef12345678") }""") should equal(BSONDocument(
-      "_id" -> BSONObjectID("1234567890abcdef12345678")
+      "_id" -> BSONObjectID.parse("1234567890abcdef12345678").get
     ))
   }
 
