@@ -16,6 +16,23 @@ goal is to make compile time queries syntax checking (as much as possible).
 How to use
 ----------
 
+### Installation ###
+
+MongoQuery is published to Sonatype maven repository.  Add following dependency to
+libraryDependencies in your SBT build file:
+
+```
+"com.github.limansky" %% "mongoquery-casbah" % "0.5"    // for Casbah users
+"com.github.limansky" %% "mongoquery-reactive" % "0.5"  // for ReactiveMongo users
+```
+
+If you want use latest development version:
+
+```
+"com.github.limansky" %% "mongoquery-casbah" % "0.6-SNAPSHOT"    // Casbah users
+"com.github.limansky" %% "mongoquery-reactive" % "0.6-SNAPSHOT"  // ReactiveMongo users
+```
+
 ### mq interpolator ###
 
 The `mq` string interpolator converts string to the BSON objects. If you use
@@ -114,24 +131,6 @@ BSON.  For example:
 import com.github.limansky.mongoquery.casbah.BSONParser
 
 persons.find(BSONParser.parse("""{ age : { $lt : 42 }}"""))
-```
-
-Installation
-------------
-
-MongoQuery is published to Sonatype maven repository.  Add following dependency to
-libraryDependencies in your SBT build file:
-
-```
-"com.github.limansky" %% "mongoquery-casbah" % "0.5"    // for Casbah users
-"com.github.limansky" %% "mongoquery-reactive" % "0.5"  // for ReactiveMongo users
-```
-
-If you want use latest development version:
-
-```
-"com.github.limansky" %% "mongoquery-casbah" % "0.6-SNAPSHOT"    // Casbah users
-"com.github.limansky" %% "mongoquery-reactive" % "0.6-SNAPSHOT"  // ReactiveMongo users
 ```
 
 Feedback
