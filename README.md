@@ -29,8 +29,9 @@ libraryDependencies in your SBT build file:
 If you want use latest development version:
 
 ```
-"com.github.limansky" %% "mongoquery-casbah" % "0.6-SNAPSHOT"    // Casbah users
-"com.github.limansky" %% "mongoquery-reactive" % "0.6-SNAPSHOT"  // ReactiveMongo users
+"com.github.limansky" %% "mongoquery-casbah"     % "0.6-SNAPSHOT"  // Casbah users
+"com.github.limansky" %% "mongoquery-reactive"   % "0.6-SNAPSHOT"  // ReactiveMongo users
+"com.github.limansky" %% "mongoquery-mongoscala" % "0.6-SNAPSHOT"  // MongoScala users
 ```
 
 ### mq interpolator ###
@@ -58,6 +59,14 @@ collection.
   enumerate().apply(Iteratee.foreach { doc =>
   println("found document: " + BSONDocument.pretty(doc))
 })
+```
+
+For [MongoScala][] it creates `Document`s:
+
+```Scala
+import com.github.limansky.mongoquery.mongoscala._
+
+collection.insert(mq"""{ name: "John"} """)
 ```
 
 Since the query is defined inside of the string interpolator, the words started
@@ -141,4 +150,5 @@ Any feedback is very welcome!  You can ask any questions in [MongoQuery mailing 
 [MongoDB]: http://www.mongodb.org/
 [Casbah]: https://github.com/mongodb/casbah
 [ReactiveMongo]: http://reactivemongo.org/
+[MongoScala]: https://github.com/mongodb/mongo-scala-driver
 [maillist]: https://groups.google.com/forum/#!forum/mongoquery-users
