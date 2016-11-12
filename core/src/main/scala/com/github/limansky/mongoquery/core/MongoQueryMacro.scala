@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Mike Limansky
+ * Copyright 2014-2016 Mike Limansky
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -68,6 +68,12 @@ trait MongoQueryMacro {
    * @return created regex.
    */
   def createRegex(c: Context)(expression: String, options: String): c.Expr[Any]
+
+  def createNull(c: Context): c.Expr[Any] = {
+    import c.universe._
+
+    c.Expr(q"null")
+  }
 
   /**
    * This is mq interpolator entry point.
@@ -163,6 +169,7 @@ trait MongoQueryMacro {
       case BSON.Object(m) => wrapObject(c)(m, args)
       case BSON.Id(id) => createId(c)(id)
       case BSON.Regex(r, opt) => createRegex(c)(r, opt)
+      case null => createNull(c)
       case a: List[_] =>
         val wrapped = a.map(i => wrapValue(c)(i, args))
         c.Expr[List[Any]](q"List(..$wrapped)")

@@ -21,11 +21,11 @@ import org.scalatest.{ FlatSpec, Matchers }
 import reactivemongo.bson.{ BSONDateTime, BSONDocument, BSONObjectID }
 import reactivemongo.bson.BSONRegex
 
-class ReactiveHelperTest extends FlatSpec with Matchers {
+class ReactiveMongoTest extends FlatSpec with Matchers {
 
   import com.github.limansky.mongoquery.core.TestObjects._
 
-  "ReactiveHelper mq implementation" should "convert string into BSONDocument" in {
+  "ReactiveMongo mq implementation" should "convert string into BSONDocument" in {
     val q = mq"{ amount : { $$lte : 15}}"
     q should equal(BSONDocument("amount" -> BSONDocument("$lte" -> 15)))
   }

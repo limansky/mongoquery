@@ -22,11 +22,11 @@ import com.mongodb.casbah.Imports._
 import org.bson.types.ObjectId
 import org.scalatest.{ FlatSpec, Matchers }
 
-class CasbahHelperTest extends FlatSpec with Matchers {
+class CasbahTest extends FlatSpec with Matchers {
 
   import com.github.limansky.mongoquery.core.TestObjects._
 
-  "CasbahHelper mq implementation" should "convert string into MongoDBObject" in {
+  "Casbah mq implementation" should "convert string into MongoDBObject" in {
     mq"{ amount : { $$lte : 15}}" should equal(MongoDBObject("amount" -> MongoDBObject("$lte" -> 15)))
   }
 

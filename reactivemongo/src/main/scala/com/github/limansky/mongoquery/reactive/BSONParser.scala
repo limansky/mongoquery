@@ -35,7 +35,7 @@ object BSONParser {
   def wrapValue(value: Any): BSONValue = {
     value match {
       case BSON.Object(m) => wrapObject(m)
-      case BSON.Id(id) => BSONObjectID(id)
+      case BSON.Id(id) => BSONObjectID.parse(id).getOrElse(throw new IllegalArgumentException(s"Malformed objectId $id"))
       case BSON.Regex(r, opt) => BSONRegex(r, opt)
       case list: List[_] => BSONArray(list.map(wrapValue))
       case s: String => BSONString(s)

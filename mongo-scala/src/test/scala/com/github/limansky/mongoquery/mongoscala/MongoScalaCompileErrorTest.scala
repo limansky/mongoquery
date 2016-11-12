@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Mike Limansky
+ * Copyright 2015 Mike Limansky
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,21 +14,10 @@
  * limitations under the License.
  */
 
-package com.github.limansky.mongoquery
+package com.github.limansky.mongoquery.mongoscala
 
-import _root_.reactivemongo.bson.BSONDocument
+import com.github.limansky.mongoquery.core.CompileErrorsTest
 
-import scala.language.experimental.macros
-
-package object reactive {
-
-  class QueryWrapper {
-    def apply[T]: BSONDocument = macro ReactiveMongoMacro.r_mqt_impl[T]
-  }
-
-  implicit class ReactiveQueryHelper(val sc: StringContext) extends AnyVal {
-    def mq(args: Any*): BSONDocument = macro ReactiveMongoMacro.r_mq_impl
-
-    def mqt(args: Any*) = new QueryWrapper
-  }
+class MongoScalaCompileErrorTest extends CompileErrorsTest {
+  override val imports = "com.github.limansky.mongoquery.mongoscala._" :: super.imports
 }

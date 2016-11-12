@@ -1,4 +1,4 @@
-lazy val root = project in file(".") aggregate(core, casbah, reactivemongo) settings(
+lazy val root = project in file(".") aggregate(core, casbah, reactivemongo, mongoScala) settings(
   commonSettings,
   publish := {},
   publishLocal := {}
@@ -12,6 +12,11 @@ lazy val casbah = (project in file("casbah"))
   .disablePlugins(CoverallsPlugin)
 
 lazy val reactivemongo = (project in file ("reactivemongo"))
+  .dependsOn(core % "test->test ; compile->compile")
+  .settings(commonSettings, publishSettings)
+  .disablePlugins(CoverallsPlugin)
+
+lazy val mongoScala = (project in file("mongo-scala"))
   .dependsOn(core % "test->test ; compile->compile")
   .settings(commonSettings, publishSettings)
   .disablePlugins(CoverallsPlugin)

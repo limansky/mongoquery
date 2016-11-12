@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Mike Limansky
+ * Copyright 2014-2016 Mike Limansky
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,7 +23,7 @@ import reactivemongo.bson.BSONDocument
 /**
  * Macro implementation for ReactiveMongo.
  */
-object ReactiveMacro extends MongoQueryMacro {
+object ReactiveMongoMacro extends MongoQueryMacro {
 
   type DBType = BSONDocument
 
