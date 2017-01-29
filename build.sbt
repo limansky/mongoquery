@@ -21,8 +21,8 @@ lazy val commonSettings = Seq(
   scalaVersion := "2.11.8",
   crossScalaVersions := Seq("2.11.8", "2.10.6"),
   scalacOptions ++= Seq("-deprecation", "-unchecked", "-feature"),
-  libraryDependencies <++= scalaVersion { sv =>
-    CrossVersion.partialVersion(sv) match {
+  libraryDependencies ++= {
+    CrossVersion.partialVersion(scalaVersion.value) match {
       case Some((2, 11)) => Seq()
       case Some((2, 10)) => Seq(
         compilerPlugin("org.scalamacros" % "paradise" % "2.1.0" cross CrossVersion.full),
