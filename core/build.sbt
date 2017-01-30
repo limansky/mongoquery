@@ -10,6 +10,6 @@ libraryDependencies ++= {
 }
 
 libraryDependencies ++= Seq(
-  "org.scalacheck"  %% "scalacheck"         % "1.14.0"              % "test",
+  "org.scalacheck"  %% "scalacheck"         % "1.13.4"              % "test",
   "org.scala-lang"  %  "scala-compiler"     % scalaVersion.value    % "test"
 )
