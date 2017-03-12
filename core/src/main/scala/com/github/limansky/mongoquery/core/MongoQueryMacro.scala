@@ -91,7 +91,6 @@ trait MongoQueryMacro {
 
     val q"$cn(scala.StringContext.apply(..$partsTrees)).mqt(..$argsTrees)" = c.prefix.tree
     val args = argsTrees.map(c.Expr(_))
-    val types = args.map(_.actualType)
     val parsed = parse(c)(partsTrees)
 
     val errors = parsed.members.foldLeft(List.empty[String]) {
