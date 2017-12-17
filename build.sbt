@@ -1,9 +1,9 @@
 import ReleaseTransformations._
 
 lazy val root = project in file(".") aggregate(core, casbah, reactivemongo) settings(
-  commonSettings,
   publish := {},
-  publishLocal := {}
+  publishLocal := {},
+  publishArtifact := false
 )
 
 lazy val core = (project in file("core"))
