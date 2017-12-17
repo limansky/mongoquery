@@ -19,8 +19,8 @@ import org.scalatest.{ FlatSpec, Matchers }
 import org.scalatest.prop.{ GeneratorDrivenPropertyChecks, TableDrivenPropertyChecks }
 
 class UtilTest extends FlatSpec with Matchers
-    with GeneratorDrivenPropertyChecks
-    with TableDrivenPropertyChecks {
+  with GeneratorDrivenPropertyChecks
+  with TableDrivenPropertyChecks {
 
   "Levenshtein" should "be zero for matching strings" in {
     forAll { s: String =>
