@@ -7,15 +7,44 @@ lazy val root = project in file(".") aggregate(core, casbah, reactivemongo) sett
 )
 
 lazy val core = (project in file("core"))
-  .settings (commonSettings, publishSettings)
+  .settings(
+    name := "mongoquery-core",
+    commonSettings,
+    publishSettings,
+    releaseSettings,
+    libraryDependencies ++= {
+      CrossVersion.partialVersion(scalaVersion.value) match {
+        case Some((2, v)) if v >= 11 => Seq(
+          "org.scala-lang.modules"  %% "scala-parser-combinators" % "1.0.6"
+        )
+        case _ => Nil
+      }
+    } ++ Seq(
+      "org.scalacheck"  %% "scalacheck"         % "1.13.5"              % Test,
+      "org.scala-lang"  %  "scala-compiler"     % scalaVersion.value    % Test
+    )
+  )
 
 lazy val casbah = (project in file("casbah"))
   .dependsOn(core % "test->test ; compile->compile")
-  .settings(commonSettings, publishSettings, releaseSettings)
+  .settings(
+    name := "mongoquery-casbah",
+    commonSettings,
+    publishSettings,
+    releaseSettings,
+    libraryDependencies += "org.mongodb" %% "casbah-core" % "3.1.1" % Provided
+  )
 
 lazy val reactivemongo = (project in file ("reactivemongo"))
   .dependsOn(core % "test->test ; compile->compile")
-  .settings(commonSettings, publishSettings, releaseSettings)
+  .settings(
+    name := "mongoquery-reactive",
+    commonSettings,
+    publishSettings,
+    releaseSettings,
+    resolvers += Resolver.typesafeRepo("releases"),
+    libraryDependencies += "org.reactivemongo" %% "reactivemongo" % "0.12.6" % Provided
+  )
 
 lazy val commonSettings = Seq(
   scalaVersion := "2.12.4",
@@ -77,6 +106,7 @@ lazy val publishSettings = Seq(
 lazy val releaseSettings = Seq(
   releaseCrossBuild := true,
   releasePublishArtifactsAction := PgpKeys.publishSigned.value,
+  releaseTagName := s"mongoquery_${version.value}",
   releaseProcess := Seq[ReleaseStep](
     checkSnapshotDependencies,
     inquireVersions,
