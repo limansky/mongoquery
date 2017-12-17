@@ -1,23 +1,26 @@
+import ReleaseTransformations._
+
 lazy val root = project in file(".") aggregate(core, casbah, reactivemongo) settings(
   commonSettings,
   publish := {},
   publishLocal := {}
 )
 
-lazy val core = project in file("core") settings (commonSettings, publishSettings) disablePlugins CoverallsPlugin
+lazy val core = (project in file("core"))
+  .disablePlugins(CoverallsPlugin)
+  .settings (commonSettings, publishSettings)
 
 lazy val casbah = (project in file("casbah"))
   .dependsOn(core % "test->test ; compile->compile")
-  .settings(commonSettings, publishSettings)
+  .settings(commonSettings, publishSettings, releaseSettings)
   .disablePlugins(CoverallsPlugin)
 
 lazy val reactivemongo = (project in file ("reactivemongo"))
   .dependsOn(core % "test->test ; compile->compile")
-  .settings(commonSettings, publishSettings)
+  .settings(commonSettings, publishSettings, releaseSettings)
   .disablePlugins(CoverallsPlugin)
 
 lazy val commonSettings = Seq(
-  version := "0.6-SNAPSHOT",
   scalaVersion := "2.12.4",
   crossScalaVersions := Seq("2.12.4", "2.11.12", "2.10.7"),
   scalacOptions ++= Seq("-deprecation", "-unchecked", "-feature"),
@@ -72,4 +75,23 @@ lazy val publishSettings = Seq(
       <url>http://github.com/limansky</url>
     </developer>
   </developers>
+)
+
+lazy val releaseSettings = Seq(
+  releaseCrossBuild := true,
+  releasePublishArtifactsAction := PgpKeys.publishSigned.value,
+  releaseProcess := Seq[ReleaseStep](
+    checkSnapshotDependencies,
+    inquireVersions,
+    runClean,
+    runTest,
+    setReleaseVersion,
+    commitReleaseVersion,
+    tagRelease,
+    publishArtifacts,
+    setNextVersion,
+    commitNextVersion,
+    releaseStepCommand("sonatypeReleaseAll"),
+    pushChanges
+  )
 )
