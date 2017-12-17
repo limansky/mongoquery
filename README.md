@@ -3,7 +3,7 @@ MongoQuery
 
 [![Build Status](https://travis-ci.org/limansky/mongoquery.svg?branch=master)](https://travis-ci.org/limansky/mongoquery)
 [![codecov](https://codecov.io/gh/limansky/mongoquery/branch/master/graph/badge.svg)](https://codecov.io/gh/limansky/mongoquery)
-[![Maven Central](https://img.shields.io/maven-central/v/com.github.limansky/mongoquery_2.11.svg)](https://maven-badges.herokuapp.com/maven-central/com.github.limansky/mongoquery_2.11)
+[![Maven Central](https://img.shields.io/maven-central/v/com.github.limansky/mongoquery-core_2.11.svg)](https://maven-badges.herokuapp.com/maven-central/com.github.limansky/mongoquery-core_2.11)
 
 MongoQuery is a macro based MongoDB query builder for Scala.
 
