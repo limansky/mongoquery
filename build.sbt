@@ -18,8 +18,8 @@ lazy val reactivemongo = (project in file ("reactivemongo"))
 
 lazy val commonSettings = Seq(
   version := "0.6-SNAPSHOT",
-  scalaVersion := "2.11.8",
-  crossScalaVersions := Seq("2.11.8", "2.10.6"),
+  scalaVersion := "2.11.12",
+  crossScalaVersions := Seq("2.11.12", "2.10.7"),
   scalacOptions ++= Seq("-deprecation", "-unchecked", "-feature"),
   libraryDependencies ++= {
     CrossVersion.partialVersion(scalaVersion.value) match {
@@ -33,7 +33,7 @@ lazy val commonSettings = Seq(
   },
   libraryDependencies ++= Seq(
     "org.scala-lang"  %  "scala-reflect"  % scalaVersion.value,
-    "org.scalatest"   %% "scalatest"      % "3.0.1"             % "test"
+    "org.scalatest"   %% "scalatest"      % "3.0.4"             % "test"
   )
 )
 
