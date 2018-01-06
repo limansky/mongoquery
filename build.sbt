@@ -66,8 +66,8 @@ lazy val commonSettings = Seq(
     "org.scala-lang"  %  "scala-reflect"  % scalaVersion.value,
     "org.scalatest"   %% "scalatest"      % "3.0.4"             % "test"
   ),
-  unmanagedSourceDirectories in Compile ++= {
-    (unmanagedSourceDirectories in Compile).value
+  Compile / unmanagedSourceDirectories ++= {
+    (Compile / unmanagedSourceDirectories).value
       .filter(_.getName == "scala")
       .flatMap(f => CrossVersion.partialVersion(scalaVersion.value) match {
         case Some((2, 10)) => Seq()
@@ -80,7 +80,7 @@ lazy val publishSettings = Seq(
   licenses += ("Apache 2.0 License", url("http://www.apache.org/licenses/LICENSE-2.0")),
   homepage := Some(url("http://github.com/limansky/mongoquery")),
   publishMavenStyle := true,
-  publishArtifact in Test := false,
+  Test / publishArtifact := false,
   organization := "com.github.limansky",
   scmInfo := Some(
     ScmInfo(
