@@ -22,7 +22,7 @@ lazy val core = (project in file("core"))
         case _ => Nil
       }
     } ++ Seq(
-      "org.scalacheck"  %% "scalacheck"         % "1.13.5"              % Test,
+      "org.scalacheck"  %% "scalacheck"         % "1.14.0"              % Test,
       "org.scala-lang"  %  "scala-compiler"     % scalaVersion.value    % Test
     )
   )
@@ -49,8 +49,8 @@ lazy val reactivemongo = (project in file ("reactivemongo"))
   )
 
 lazy val commonSettings = Seq(
-  scalaVersion := "2.12.4",
-  crossScalaVersions := Seq("2.12.4", "2.11.12", "2.10.7"),
+  scalaVersion := "2.12.6",
+  crossScalaVersions := Seq("2.12.6", "2.11.12", "2.10.7"),
   scalacOptions ++= Seq("-deprecation", "-unchecked", "-feature"),
   libraryDependencies ++= {
     CrossVersion.partialVersion(scalaVersion.value) match {
@@ -64,7 +64,7 @@ lazy val commonSettings = Seq(
   },
   libraryDependencies ++= Seq(
     "org.scala-lang"  %  "scala-reflect"  % scalaVersion.value,
-    "org.scalatest"   %% "scalatest"      % "3.0.4"             % "test"
+    "org.scalatest"   %% "scalatest"      % "3.0.5"             % "test"
   ),
   Compile / unmanagedSourceDirectories ++= {
     (Compile / unmanagedSourceDirectories).value
