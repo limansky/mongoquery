@@ -16,7 +16,10 @@
 
 package com.github.limansky.mongoquery.core.bsonparser
 
+import java.time.{LocalDateTime, ZoneOffset}
+
 import com.github.limansky.mongoquery.core.BSON.Member
+
 import scala.util.parsing.combinator.syntactical.StdTokenParsers
 import scala.util.parsing.input.CharArrayReader
 
@@ -62,14 +65,17 @@ class Parser extends StdTokenParsers {
 
   override val lexical = new Lexical
   lexical.delimiters ++= List("[", "]", "{", "}", ":", ",", "(", ")")
-  lexical.reserved ++= List("ObjectId", "true", "false", "null")
+  lexical.reserved ++= List("ObjectId", "true", "false", "null", "ISODate")
   lexical.operators ++= queryOperators ++ updateOperators ++ aggregationOperators
+
+  // Regular expression for ISO date (2018:07:12T10:27:00.000Z)
+  val isoDateRegex = """[0-9]{4}-[0-9]{2}-[0-9]{2}[T][0-9]{2}:[0-9]{2}:[0-9]{2}.[0-9]{3}[Z]""".r
 
   val hexDigits = Set[Char]() ++ "0123456789abcdefABCDEF".toArray
 
   import lexical._
 
-  def value: Parser[Any] = id | regexLit | int | double | boolean | nullLit | array | variable | obj | stringLit
+  def value: Parser[Any] = id | dateTime | regexLit | int | double | boolean | nullLit | array | variable | obj | stringLit
 
   def operator: Parser[Operator] = elem("operator", _.isInstanceOf[OperatorLit]) ^^ (o => Operator(o.chars))
 
@@ -90,6 +96,10 @@ class Parser extends StdTokenParsers {
   def objectIdValue = acceptIf(t => t.isInstanceOf[StringLit] && t.chars.length() == 24 && t.chars.forall(hexDigits.contains))(t => "Invalid object id: " + t.chars) ^^ (v => v.chars)
 
   def id: Parser[Id] = keyword("ObjectId") ~> "(" ~> objectIdValue <~ ")" ^^ Id
+
+  def ISODateValue= acceptIf(t => t.isInstanceOf[StringLit] && isoDateRegex.findFirstIn(t.chars).nonEmpty)(t => "Invalid ISODate: " + t.chars) ^^ (v => parseISODate(v.chars))
+
+  def dateTime: Parser[DateTime] = keyword("ISODate") ~> "(" ~> ISODateValue <~ ")"
 
   def regexLit: Parser[Regex] = elem("regex", _.isInstanceOf[RegexLit]) ^^ { case RegexLit(e, o) => Regex(e, o) }
 
@@ -115,5 +125,11 @@ class Parser extends StdTokenParsers {
   def parse(parts: Seq[String]): ParseResult[Object] = {
     val rs = parts.map(p => new CharArrayReader(p.toCharArray))
     phrase(obj)(new lexical.Scanner(rs))
+  }
+
+  def parseISODate(stringDate: String): DateTime = {
+    val date = stringDate.replaceAll("Z", "") // Java ISODate format
+    val milli = LocalDateTime.parse(date).toInstant(ZoneOffset.UTC).toEpochMilli
+    DateTime(milli)
   }
 }

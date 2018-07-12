@@ -1,7 +1,7 @@
 package com.github.limansky.mongoquery.reactive
 
-import org.scalatest.{ FlatSpec, Matchers }
-import reactivemongo.bson.{ BSONDocument, BSONNull, BSONObjectID, BSONRegex }
+import org.scalatest.{FlatSpec, Matchers}
+import reactivemongo.bson.{BSONDateTime, BSONDocument, BSONNull, BSONObjectID, BSONRegex}
 
 class BSONParserTest extends FlatSpec with Matchers {
   "ReactiveMongo parser" should "parse valid BSON" in {
@@ -27,6 +27,12 @@ class BSONParserTest extends FlatSpec with Matchers {
   it should "support object id" in {
     BSONParser.parse("""{ _id : ObjectId("1234567890abcdef12345678") }""") should equal(BSONDocument(
       "_id" -> BSONObjectID.parse("1234567890abcdef12345678").get
+    ))
+  }
+
+  it should "support ISODate" in {
+    BSONParser.parse("""{ date : ISODate("2018-07-06T20:45:00.000Z") }""") should equal(BSONDocument(
+      "date" -> BSONDateTime(1530909900000L)
     ))
   }
 
