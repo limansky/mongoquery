@@ -37,6 +37,28 @@ lazy val casbah = (project in file("casbah"))
     libraryDependencies += "org.mongodb" %% "casbah-core" % "3.1.1" % Provided
   )
 
+lazy val scala_driver = (project in file("scala_driver"))
+  .dependsOn(core % "test->test ; compile->compile")
+  .settings(
+    name := "mogno-scala-driver",
+    commonSettings,
+    publishSettings,
+    releaseSettings,
+    libraryDependencies +="org.mongodb.scala" %% "mongo-scala-driver" % "2.6.0" % Provided
+  )
+
+lazy val playground = (project in file("playground"))
+  .dependsOn(scala_driver % "test->test ; compile->compile")
+  .settings(
+    name := "playground",
+    commonSettings,
+    publishSettings,
+    releaseSettings,
+    libraryDependencies ++= List(
+      "org.mongodb.scala" %% "mongo-scala-driver" % "2.6.0" % Provided
+    )
+  )
+
 lazy val reactivemongo = (project in file ("reactivemongo"))
   .dependsOn(core % "test->test ; compile->compile")
   .settings(
