@@ -16,12 +16,13 @@
 
 package com.github.limansky.mongoquery.scala_driver
 
+import org.bson.types.ObjectId
 import org.mongodb.scala.bson._
 import com.github.limansky.mongoquery.core.BSON
 import com.github.limansky.mongoquery.core.bsonparser.Parser
 import com.github.limansky.mongoquery.core.BSON.LValue
 
-object BSONParser {
+object BsonParser {
   def parse(bson: String): BsonDocument = {
     val parser = new Parser
 
@@ -35,9 +36,14 @@ object BSONParser {
   def wrapValue(value: Any): BsonValue = {
     value match {
       case BSON.Object(m) => wrapObject(m)
-      case BSON.Id(id) => BsonObjectId(id) // .. check id correctness
+
+      case BSON.Id(id) if ObjectId.isValid(id) => BsonObjectId(id)
+      case BSON.Id(id) => throw new IllegalStateException(s"Invalid ObjectId format: $id")
+
       case BSON.Regex(r, opt) => BsonRegularExpression(r, opt)
+
       case list: List[_] => BsonArray(list.map(wrapValue))
+
       case s: String => BsonString(s)
       case n: Double => BsonDouble(n)
       case i: Int => BsonInt32(i)
