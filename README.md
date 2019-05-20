@@ -96,6 +96,7 @@ MongoQuery supports several MongoDB specific literal types.
  - ObjectIds. `mq"""{ clientId : ObjectId("01234567890abcdef1234") }"""`
  - Booleans. `mq"{ expired : false }"`
  - Regular expressions (since 0.5). `mq"{ name : /^joe/i }"`
+ - ISODates. `mq"""{ createdOn : ISODate("2018-07-06T20:45:00.000") }"""`
 
 ### mqt interpolator ###
 
