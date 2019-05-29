@@ -59,19 +59,9 @@ lazy val reactivemongo = (project in file ("reactivemongo"))
   )
 
 lazy val commonSettings = Seq(
-  scalaVersion := "2.12.6",
-  crossScalaVersions := Seq("2.12.6", "2.11.12", "2.10.7"),
+  scalaVersion := "2.12.8",
+  crossScalaVersions := Seq("2.12.8", "2.11.12"),
   scalacOptions ++= Seq("-deprecation", "-unchecked", "-feature"),
-  libraryDependencies ++= {
-    CrossVersion.partialVersion(scalaVersion.value) match {
-      case Some((2, 10)) => Seq(
-        compilerPlugin("org.scalamacros" % "paradise" % "2.1.0" cross CrossVersion.full),
-        "org.scalamacros" %% "quasiquotes" % "2.1.0"
-      )
-      case Some((2, x)) if x >= 11 => Seq()
-      case _ => sys.error("Unsupported Scala version")
-    }
-  },
   libraryDependencies ++= Seq(
     "org.scala-lang"  %  "scala-reflect"  % scalaVersion.value,
     "org.scalatest"   %% "scalatest"      % "3.0.5"             % "test"
@@ -80,8 +70,8 @@ lazy val commonSettings = Seq(
     (Compile / unmanagedSourceDirectories).value
       .filter(_.getName == "scala")
       .flatMap(f => CrossVersion.partialVersion(scalaVersion.value) match {
-        case Some((2, 10)) => Seq()
         case Some((2, x)) if x >= 11 => Seq(new File(f.getPath + "-2.11+"))
+        case _ => Seq()
       })
     }
 )
