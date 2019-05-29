@@ -44,26 +44,58 @@ class Parser extends StdTokenParsers {
   )
 
   val aggregationOperators = Set(
-    "$geoNear", "$group", "$limit", "$match", "$out", "$project", "$redact", "$slip", "$sort", "$unwind", // Stage
-    "$and", "$not", "$or", // Boolean
-    "$allElementsTrue", "$anyElementTrue", "$setDifference", "$setIntersection", "$setIsSubset", "$setUnion", // Sets
-    "$cmp", "$eq", "$gt", "$gte", "$lt", "$lte", "$ne", // Comparation
-    "$add", "$divide", "$mod", "$multiply", "$subtract", // Arithmetic
-    "$concat", "$strcasecmp", "$substr", "$toLower", "$toUpper", // String
-    "$meta", // Text search
-    "$size", // Array
-    "$let", "$map", // Variable
-    "$literal", // Literal
-    "$dayOfMonth", "$dayOfWeek", "$dayOfYear", "$hour", "$millisecond",
-    "$minute", "$month", "$second", "$week", "$year", // Date
-    "$cond", "$ifNull", // Conditional
-    "$addToSet", "$avg", "$first", "$last", "$max", "$min", "$push", "$sum" // Accumulator
+    // Stages
+    "$geoNear", "$group", "$limit", "$match", "$out", "$project", "$redact", "$slip", "$sort", "$unwind",
+    "$sample", "$indexStats", "$lookup", "$graphLookup", "$bucket", "$bucketAuto", "$facet", "$sortByCount",
+    "$addFields", "$replaceRoot", "$count", "$currentOp", "$listSessions", "$listLocalSessions",
+    // Boolean
+    "$and", "$not", "$or",
+    // Sets
+    "$allElementsTrue", "$anyElementTrue", "$setDifference", "$setIntersection", "$setIsSubset", "$setUnion",
+    // Comparation
+    "$cmp", "$eq", "$gt", "$gte", "$lt", "$lte", "$ne",
+    // Arithmetic
+    "$add", "$divide", "$mod", "$multiply", "$subtract", "$sqrt", "$abs", "$log", "$log10", "$ln", "$pow",
+    "$exp", "$trunc", "$ceil", "$floor",
+    // String
+    "$concat", "$strcasecmp", "$substr", "$toLower", "$toUpper", "$indexOfBytes", "$indexOfCP", "$split",
+    "$strLenBytes", "$strLenCP", "$substrBytes", "$substrCP",
+    "$ltrim", "$rtrim", "$trim", // from version 4.x
+    // Text search
+    "$meta",
+    // Array
+    "$size", "$slice", "$arrayElemAt", "$concatArrays", "$isArray", "$filter",
+    "$indexOfArray", "$range", "$reverseArray", "$reduce", "$zip", "$arrayToObject",
+    // Ojbect
+    "$objectToArray", "$mergeObjects",
+    // Variable
+    "$let", "$map",
+    // Literal
+    "$literal",
+    // Date
+    "$dayOfMonth", "$dayOfWeek", "$dayOfYear", "$hour", "$millisecond", "$isoDayOfWeek", "$isoWeek", "$isoWeekYear",
+    "$minute", "$month", "$second", "$week", "$year", "$dateToString", "$dateFromString", "$dateFromParts", "$dateToParts",
+    // Conditional
+    "$cond", "$ifNull", "$switch",
+    // Accumulator
+    "$addToSet", "$avg", "$first", "$last", "$max", "$min", "$push", "$sum", "$stdDevSamp", "$stdDevPop",
+    // Other
+    "$collStats"
+  )
+
+  val bitsOperators = List(
+    "$bitsAllSet", "$bitsAllClear", "$bitsAnySet", "$bitsAnyClear"
+  )
+
+  // from version 4.x
+  val typeConversionOperators = List(
+    "$convert", "$toBool", "$toDate", "$toDecimal", "$toDouble", "$toInt", "$toLong", "$toObjectId", "$toString"
   )
 
   override val lexical = new Lexical
   lexical.delimiters ++= List("[", "]", "{", "}", ":", ",", "(", ")")
   lexical.reserved ++= List("ObjectId", "true", "false", "null")
-  lexical.operators ++= queryOperators ++ updateOperators ++ aggregationOperators
+  lexical.operators ++= queryOperators ++ updateOperators ++ aggregationOperators ++ bitsOperators ++ typeConversionOperators
 
   val hexDigits = Set[Char]() ++ "0123456789abcdefABCDEF".toArray
 
