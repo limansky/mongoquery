@@ -29,4 +29,6 @@ object BSONParser extends MongoQueryParser {
   override def createRegex(expression: String, options: String): Any = expression.r
 
   override def createId(id: String): Any = new ObjectId(id)
+
+  override protected def createNull: Any = null
 }

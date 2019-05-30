@@ -17,9 +17,9 @@
 package com.github.limansky.mongoquery.reactive
 
 import java.util.Date
+
 import org.scalatest.{ FlatSpec, Matchers }
-import reactivemongo.bson.{ BSONDateTime, BSONDocument, BSONObjectID }
-import reactivemongo.bson.BSONRegex
+import reactivemongo.bson.{ BSONDateTime, BSONDocument, BSONNull, BSONObjectID, BSONRegex }
 
 class ReactiveHelperTest extends FlatSpec with Matchers {
 
@@ -81,7 +81,7 @@ class ReactiveHelperTest extends FlatSpec with Matchers {
   }
 
   it should "support null" in {
-    mq"{bar : null}" should equal(BSONDocument("bar" -> null))
+    mq"{bar : null}" should equal(BSONDocument("bar" -> BSONNull))
   }
 
   it should "support empty objects" in {

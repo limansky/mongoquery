@@ -22,6 +22,7 @@ object BSON {
   case class Id(id: String)
   case class DateTime(l: Long)
   case class Regex(expression: String, options: String)
+  case object NullObj
 
   sealed abstract class IdentPart(val name: String)
 
