@@ -25,6 +25,7 @@ trait MongoQueryParser {
   protected def createObject(dbParts: List[(String, Any)]): DbType
   protected def createRegex(r: String, opt: String): Any
   protected def createId(id: String): Any
+  protected def createNull: Any
 
   def parse(bson: String): DbType = {
     val parser = new Parser
@@ -41,6 +42,7 @@ trait MongoQueryParser {
       case BSON.Object(m) => wrapObject(m)
       case BSON.Id(id) => createId(id)
       case BSON.Regex(r, opt) => createRegex(r, opt)
+      case BSON.NullObj => createNull
       case list: List[_] => list.map(wrapValue)
       case v => v
     }

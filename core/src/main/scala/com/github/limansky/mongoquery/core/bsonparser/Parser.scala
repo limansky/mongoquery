@@ -115,7 +115,7 @@ class Parser extends StdTokenParsers {
 
   def falseLit: Parser[Boolean] = keyword("false") ^^^ false
 
-  def nullLit: Parser[Null] = keyword("null") ^^^ null
+  def nullLit: Parser[NullObj.type] = keyword("null") ^^^ NullObj
 
   def double: Parser[Double] = elem("double", _.isInstanceOf[DoubleLit]) ^^ (_.chars.toDouble)
 

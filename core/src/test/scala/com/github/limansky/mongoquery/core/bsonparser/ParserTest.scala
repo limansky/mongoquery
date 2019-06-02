@@ -112,7 +112,7 @@ class ParserTest extends FlatSpec with Matchers with GeneratorDrivenPropertyChec
   }
 
   it should "be possible to use null literal" in {
-    parse("{ b: null }") should be(Object(List(fld("b") -> null)))
+    parse("{ b: null }") should be(Object(List(fld("b") -> NullObj)))
   }
 
   it should "fail on unknown operators" in {

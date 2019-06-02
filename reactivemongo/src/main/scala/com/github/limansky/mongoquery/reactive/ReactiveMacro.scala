@@ -46,4 +46,10 @@ object ReactiveMacro extends MongoQueryMacro {
 
     c.Expr(q"reactivemongo.bson.BSONRegex($expression, $options)")
   }
+
+  override def createNull(c: Context): c.Expr[Any] = {
+    import c.universe._
+
+    c.Expr(q"reactivemongo.bson.BSONNull")
+  }
 }

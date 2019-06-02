@@ -37,13 +37,13 @@ object BSONParser {
       case BSON.Object(m) => wrapObject(m)
       case BSON.Id(id) => BSONObjectID.parse(id).getOrElse(throw new IllegalArgumentException(s"Invalid ObjectId $id"))
       case BSON.Regex(r, opt) => BSONRegex(r, opt)
+      case BSON.NullObj => BSONNull
       case list: List[_] => BSONArray(list.map(wrapValue))
       case s: String => BSONString(s)
       case n: Double => BSONDouble(n)
       case i: Int => BSONInteger(i)
       case l: Long => BSONLong(l)
       case b: Boolean => BSONBoolean(b)
-      case null => BSONNull
       case x => throw new IllegalStateException(s"Unsupported value $x")
     }
   }
