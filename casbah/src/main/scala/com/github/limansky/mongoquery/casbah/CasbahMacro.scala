@@ -45,4 +45,9 @@ object CasbahMacro extends MongoQueryMacro {
     import c.universe._
     c.Expr(q"$expression.r")
   }
+
+  override def createNull(c: Context): c.Expr[Any] = {
+    import c.universe._
+    c.Expr(q"null")
+  }
 }

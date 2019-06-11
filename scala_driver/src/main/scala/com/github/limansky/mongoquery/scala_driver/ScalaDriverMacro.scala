@@ -47,4 +47,10 @@ object ScalaDriverMacro extends MongoQueryMacro {
 
     c.Expr(q"org.mongodb.scala.bson.BsonRegularExpression($expression, $options)")
   }
+
+  override def createNull(c: Context) = {
+    import c.universe._
+
+    c.Expr(q"org.mongodb.scala.bson.BsonNull()")
+  }
 }

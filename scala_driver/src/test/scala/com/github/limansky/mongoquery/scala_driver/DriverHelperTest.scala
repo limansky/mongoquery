@@ -17,8 +17,8 @@
 package com.github.limansky.mongoquery.scala_driver
 
 import java.util.Date
-import org.mongodb.scala.bson.{BsonDateTime, BsonDocument, BsonNull, BsonObjectId, BsonRegularExpression, ObjectId}
-import org.scalatest.{FlatSpec, Matchers}
+import org.mongodb.scala.bson.{ BsonDateTime, BsonDocument, BsonNull, BsonObjectId, BsonRegularExpression, ObjectId }
+import org.scalatest.{ FlatSpec, Matchers }
 
 class DriverHelperTest extends FlatSpec with Matchers {
 

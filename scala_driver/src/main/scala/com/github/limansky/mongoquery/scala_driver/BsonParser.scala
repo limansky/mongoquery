@@ -36,10 +36,11 @@ object BsonParser {
   def wrapValue(value: Any): BsonValue = {
     value match {
       case BSON.Object(m) => wrapObject(m)
+      case BSON.NullObj => BsonNull()
 
       case BSON.Id(id) if ObjectId.isValid(id) => BsonObjectId(id)
-      case BSON.Id(id) => throw new IllegalStateException(s"Invalid ObjectId format: $id")
 
+      case BSON.Id(id) => throw new IllegalStateException(s"Invalid ObjectId format: $id")
       case BSON.Regex(r, opt) => BsonRegularExpression(r, opt)
 
       case list: List[_] => BsonArray(list.map(wrapValue))

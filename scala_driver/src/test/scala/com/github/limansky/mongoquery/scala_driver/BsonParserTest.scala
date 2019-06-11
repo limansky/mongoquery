@@ -1,7 +1,7 @@
 package com.github.limansky.mongoquery.scala_driver
 
-import org.mongodb.scala.bson.{BsonDocument, BsonNull, BsonObjectId, BsonRegularExpression}
-import org.scalatest.{FlatSpec, Matchers}
+import org.mongodb.scala.bson.{ BsonDocument, BsonNull, BsonObjectId, BsonRegularExpression }
+import org.scalatest.{ FlatSpec, Matchers }
 
 class BsonParserTest extends FlatSpec with Matchers {
   "DriverMongo parser" should "parse valid BSON" in {
