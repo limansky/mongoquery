@@ -20,6 +20,7 @@ lazy val core = (project in file("core"))
     commonSettings,
     publishSettings,
     releaseSettings,
+    crossScalaVersions := Seq(scala212, scala211, scala210),
     libraryDependencies ++= {
       CrossVersion.partialVersion(scalaVersion.value) match {
         case Some((2, v)) if v >= 11 =>
