@@ -80,17 +80,7 @@ class DriverHelperTest extends FlatSpec with Matchers {
   }
 
   it should "support null" in {
-    // TODO fix it:
-    // Error:(84, 5) overloaded method value apply with alternatives:
-    //  (json: String)org.mongodb.scala.bson.BsonDocument <and>
-    //  (elems: org.mongodb.scala.bson.BsonMagnets.CanBeBsonElement*)org.mongodb.scala.bson.BsonDocument <and>
-    //  (elems: Traversable[(String, org.mongodb.scala.bson.BsonValue)])org.mongodb.scala.bson.BsonDocument
-    // cannot be applied to ((String, Null))
-    //    mq"{bar : null}" should equal(BsonDocument(List("bar" -> BsonNull())))
-    //
-    // Seems like BsonDocument constructor doesn't support (Str, null) args
-
-    // mq"{bar : null}" should equal(BsonDocument(List("bar" -> BsonNull())))
+    mq"{bar : null}" should equal(BsonDocument(List("bar" -> BsonNull())))
   }
 
   it should "support empty objects" in {
