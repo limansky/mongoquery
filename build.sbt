@@ -3,7 +3,7 @@ import ReleaseTransformations._
 lazy val scala212 = "2.12.8"
 lazy val scala211 = "2.11.12"
 
-lazy val root = project in file(".") aggregate (core, casbah, reactivemongo, scala_driver) settings (
+lazy val root = project in file(".") aggregate (core, casbah, reactivemongo, scalaDriver) settings (
   commonSettings,
   publishSettings,
   // According to the docs - crossScalaVersions must be set to Nil on the aggregating project to avoid double publishing
@@ -38,7 +38,7 @@ lazy val casbah = (project in file("casbah"))
     libraryDependencies += "org.mongodb" %% "casbah-core" % "3.1.1" % Provided
   )
 
-lazy val scala_driver = (project in file("scala_driver"))
+lazy val scalaDriver = (project in file("scala-driver"))
   .dependsOn(core % "test->test ; compile->compile")
   .settings(
     name := "mongoquery-scala-driver",
@@ -58,7 +58,7 @@ lazy val reactivemongo = (project in file("reactivemongo"))
     publishSettings,
     releaseSettings,
     resolvers += Resolver.typesafeRepo("releases"),
-    libraryDependencies += "org.reactivemongo" %% "reactivemongo" % "0.12.6" % Provided
+    libraryDependencies += "org.reactivemongo" %% "reactivemongo" % "0.18.0" % Provided
   )
 
 lazy val commonSettings = Seq(
