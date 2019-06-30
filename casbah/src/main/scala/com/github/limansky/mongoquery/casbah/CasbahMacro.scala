@@ -16,9 +16,10 @@
 
 package com.github.limansky.mongoquery.casbah
 
-import com.github.limansky.mongoquery.core.MacroContext.Context
 import com.github.limansky.mongoquery.core.MongoQueryMacro
 import com.mongodb.DBObject
+
+import scala.reflect.macros.blackbox
 
 /**
  * Macro implementation for Casbah.
@@ -27,26 +28,26 @@ object CasbahMacro extends MongoQueryMacro {
 
   type DBType = DBObject
 
-  def c_mq_impl(c: Context)(args: c.Expr[Any]*): c.Expr[DBObject] = mq_impl(c)(args: _*)
+  def c_mq_impl(c: blackbox.Context)(args: c.Expr[Any]*): c.Expr[DBObject] = mq_impl(c)(args: _*)
 
-  def c_mqt_impl[T: c.WeakTypeTag](c: Context): c.Expr[DBObject] = mqt_impl[T](c)
+  def c_mqt_impl[T: c.WeakTypeTag](c: blackbox.Context): c.Expr[DBObject] = mqt_impl[T](c)
 
-  override def createObject(c: Context)(dbparts: List[(String, c.Expr[Any])]): c.Expr[DBObject] = {
+  override def createObject(c: blackbox.Context)(dbparts: List[(String, c.Expr[Any])]): c.Expr[DBObject] = {
     import c.universe._
     c.Expr(q"com.mongodb.casbah.commons.MongoDBObject(..$dbparts)")
   }
 
-  override def createId(c: Context)(id: String): c.Expr[Any] = {
+  override def createId(c: blackbox.Context)(id: String): c.Expr[Any] = {
     import c.universe._
     c.Expr(q"new org.bson.types.ObjectId($id)")
   }
 
-  override def createRegex(c: Context)(expression: String, options: String): c.Expr[Any] = {
+  override def createRegex(c: blackbox.Context)(expression: String, options: String): c.Expr[Any] = {
     import c.universe._
     c.Expr(q"$expression.r")
   }
 
-  override def createNull(c: Context): c.Expr[Any] = {
+  override def createNull(c: blackbox.Context): c.Expr[Any] = {
     import c.universe._
     c.Expr(q"null")
   }

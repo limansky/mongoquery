@@ -16,9 +16,10 @@
 
 package com.github.limansky.mongoquery.reactive
 
-import com.github.limansky.mongoquery.core.MacroContext.Context
 import com.github.limansky.mongoquery.core.MongoQueryMacro
 import reactivemongo.bson.BSONDocument
+
+import scala.reflect.macros.blackbox
 
 /**
  * Macro implementation for ReactiveMongo.
@@ -27,27 +28,27 @@ object ReactiveMacro extends MongoQueryMacro {
 
   type DBType = BSONDocument
 
-  def r_mq_impl(c: Context)(args: c.Expr[Any]*): c.Expr[BSONDocument] = mq_impl(c)(args: _*)
+  def r_mq_impl(c: blackbox.Context)(args: c.Expr[Any]*): c.Expr[BSONDocument] = mq_impl(c)(args: _*)
 
-  def r_mqt_impl[T: c.WeakTypeTag](c: Context): c.Expr[BSONDocument] = mqt_impl[T](c)
+  def r_mqt_impl[T: c.WeakTypeTag](c: blackbox.Context): c.Expr[BSONDocument] = mqt_impl[T](c)
 
-  override def createObject(c: Context)(dbparts: List[(String, c.Expr[Any])]): c.Expr[BSONDocument] = {
+  override def createObject(c: blackbox.Context)(dbparts: List[(String, c.Expr[Any])]): c.Expr[BSONDocument] = {
     import c.universe._
     c.Expr(q"reactivemongo.bson.BSONDocument(..$dbparts)")
   }
 
-  override def createId(c: Context)(id: String): c.Expr[Any] = {
+  override def createId(c: blackbox.Context)(id: String): c.Expr[Any] = {
     import c.universe._
     c.Expr(q"reactivemongo.bson.BSONObjectID.parse($id).get")
   }
 
-  override def createRegex(c: Context)(expression: String, options: String): c.Expr[Any] = {
+  override def createRegex(c: blackbox.Context)(expression: String, options: String): c.Expr[Any] = {
     import c.universe._
 
     c.Expr(q"reactivemongo.bson.BSONRegex($expression, $options)")
   }
 
-  override def createNull(c: Context): c.Expr[Any] = {
+  override def createNull(c: blackbox.Context): c.Expr[Any] = {
     import c.universe._
 
     c.Expr(q"reactivemongo.bson.BSONNull")

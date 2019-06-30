@@ -16,10 +16,11 @@
 
 package com.github.limansky.mongoquery.scala_driver
 
-import com.github.limansky.mongoquery.core.MacroContext.Context
 import com.github.limansky.mongoquery.core.MongoQueryMacro
-import org.mongodb.scala.bson.BsonDocument
+import org.mongodb.scala.bson.{ BsonDocument, BsonNull }
+
 import scala.language.experimental.macros
+import scala.reflect.macros.blackbox
 
 /**
  * Macro implementation for Mogno Scala Driver.
@@ -28,27 +29,27 @@ object ScalaDriverMacro extends MongoQueryMacro {
 
   type DBType = BsonDocument
 
-  def r_mq_impl(c: Context)(args: c.Expr[Any]*): c.Expr[BsonDocument] = mq_impl(c)(args: _*)
+  def r_mq_impl(c: blackbox.Context)(args: c.Expr[Any]*): c.Expr[BsonDocument] = mq_impl(c)(args: _*)
 
-  def r_mqt_impl[T: c.WeakTypeTag](c: Context): c.Expr[BsonDocument] = mqt_impl[T](c)
+  def r_mqt_impl[T: c.WeakTypeTag](c: blackbox.Context): c.Expr[BsonDocument] = mqt_impl[T](c)
 
-  override def createObject(c: Context)(dbparts: List[(String, c.Expr[Any])]): c.Expr[BsonDocument] = {
+  override def createObject(c: blackbox.Context)(dbparts: List[(String, c.Expr[Any])]): c.Expr[BsonDocument] = {
     import c.universe._
     c.Expr(q"org.mongodb.scala.bson.BsonDocument(..$dbparts)")
   }
 
-  override def createId(c: Context)(id: String): c.Expr[Any] = {
+  override def createId(c: blackbox.Context)(id: String): c.Expr[Any] = {
     import c.universe._
     c.Expr(q"org.mongodb.scala.bson.BsonObjectId($id)")
   }
 
-  override def createRegex(c: Context)(expression: String, options: String): c.Expr[Any] = {
+  override def createRegex(c: blackbox.Context)(expression: String, options: String): c.Expr[Any] = {
     import c.universe._
 
     c.Expr(q"org.mongodb.scala.bson.BsonRegularExpression($expression, $options)")
   }
 
-  override def createNull(c: Context) = {
+  override def createNull(c: blackbox.Context): c.Expr[BsonNull] = {
     import c.universe._
 
     c.Expr(q"org.mongodb.scala.bson.BsonNull()")

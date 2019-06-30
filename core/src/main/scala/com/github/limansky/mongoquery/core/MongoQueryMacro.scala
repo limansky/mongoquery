@@ -17,8 +17,9 @@
 package com.github.limansky.mongoquery.core
 
 import com.github.limansky.mongoquery.core.BSON.{ LValue, Member }
-import com.github.limansky.mongoquery.core.MacroContext.Context
 import com.github.limansky.mongoquery.core.bsonparser.Parser
+
+import scala.reflect.macros.blackbox
 
 /**
  * Base macro implemenation without dependency to any MongoDB driver.
@@ -42,7 +43,7 @@ trait MongoQueryMacro {
    *
    * @return created object.
    */
-  def createObject(c: Context)(dbParts: List[(String, c.Expr[Any])]): c.Expr[DBType]
+  def createObject(c: blackbox.Context)(dbParts: List[(String, c.Expr[Any])]): c.Expr[DBType]
 
   /**
    * Creates id value.
@@ -55,7 +56,7 @@ trait MongoQueryMacro {
    *
    * @return created id.
    */
-  def createId(c: Context)(id: String): c.Expr[Any]
+  def createId(c: blackbox.Context)(id: String): c.Expr[Any]
 
   /**
    * Creates regex literal.
@@ -67,14 +68,14 @@ trait MongoQueryMacro {
    *
    * @return created regex.
    */
-  def createRegex(c: Context)(expression: String, options: String): c.Expr[Any]
+  def createRegex(c: blackbox.Context)(expression: String, options: String): c.Expr[Any]
 
-  def createNull(c: Context): c.Expr[Any]
+  def createNull(c: blackbox.Context): c.Expr[Any]
 
   /**
    * This is mq interpolator entry point.
    */
-  def mq_impl(c: Context)(args: c.Expr[Any]*): c.Expr[DBType] = {
+  def mq_impl(c: blackbox.Context)(args: c.Expr[Any]*): c.Expr[DBType] = {
     import c.universe._
 
     val Apply(_, List(Apply(_, partsTrees))) = c.prefix.tree
@@ -86,7 +87,7 @@ trait MongoQueryMacro {
   /**
    * This is mqt interpolator entry point.
    */
-  def mqt_impl[T: c.WeakTypeTag](c: Context): c.Expr[DBType] = {
+  def mqt_impl[T: c.WeakTypeTag](c: blackbox.Context): c.Expr[DBType] = {
     import c.universe._
 
     val analyzer = new TypeInfoAnalyzer[c.type](c)
@@ -129,7 +130,7 @@ trait MongoQueryMacro {
    *
    * In this example parts will be: "{ name: ", ", age: " and " }"
    */
-  protected def parse(c: Context)(partsTrees: List[c.Tree]): BSON.Object = {
+  protected def parse(c: blackbox.Context)(partsTrees: List[c.Tree]): BSON.Object = {
     import c.universe._
 
     val parts = partsTrees map { case Literal(Constant(s: String)) => s }
@@ -157,7 +158,7 @@ trait MongoQueryMacro {
    * This method is required to insert arguments between parts, wrap inlined
    * ids, nested objects and lists.
    */
-  protected def wrapValue(c: Context)(value: Any, args: Iterator[c.Expr[_]]): c.Expr[Any] = {
+  protected def wrapValue(c: blackbox.Context)(value: Any, args: Iterator[c.Expr[_]]): c.Expr[Any] = {
     import c.universe._
     value match {
       case BSON.Placeholder => c.Expr(args.next().tree)
@@ -175,7 +176,7 @@ trait MongoQueryMacro {
   /**
    * Wraps object into DBType.
    */
-  protected def wrapObject(c: Context)(parts: List[(LValue, Any)], args: Iterator[c.Expr[_]]): c.Expr[DBType] = {
+  protected def wrapObject(c: blackbox.Context)(parts: List[(LValue, Any)], args: Iterator[c.Expr[_]]): c.Expr[DBType] = {
     val dbParts = parts.map {
       case (lv, v) => (lv.asString, wrapValue(c)(v, args))
     }

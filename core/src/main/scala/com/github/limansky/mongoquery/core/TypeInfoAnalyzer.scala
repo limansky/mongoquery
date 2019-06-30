@@ -17,16 +17,16 @@
 package com.github.limansky.mongoquery.core
 
 import com.github.limansky.mongoquery.core.BSON.{ IdentPart, IndexedField, Member }
-import com.github.limansky.mongoquery.core.MacroContext.Context
 import com.github.limansky.mongoquery.core.TypeInfoAnalyzer.ValidationResult
 
 import scala.annotation.tailrec
+import scala.reflect.macros.blackbox
 
 object TypeInfoAnalyzer {
   type ValidationResult = Either[String, (Member, Any)]
 }
 
-class TypeInfoAnalyzer[C <: Context](override val c: C) extends TypeInfoAnalyzerBase(c) {
+class TypeInfoAnalyzer[C <: blackbox.Context](val c: C) {
 
   import c.universe._
 
@@ -42,7 +42,7 @@ class TypeInfoAnalyzer[C <: Context](override val c: C) extends TypeInfoAnalyzer
           case IndexedField(_, _) if !(s.typeSignature <:< typeOf[Traversable[_]]) =>
             Left(s"Field ${f.name} of type ${s.typeSignature} cannot be indexed")
 
-          case fld if fs.nonEmpty =>
+          case _ if fs.nonEmpty =>
             val nested = s.typeSignature
             doCheck(pair, nested, fs)
 
@@ -56,5 +56,22 @@ class TypeInfoAnalyzer[C <: Context](override val c: C) extends TypeInfoAnalyzer
 
   def check(tpe: c.Type)(pair: (Member, Any)): ValidationResult = {
     doCheck(pair, tpe, pair._1.fields)
+  }
+
+  def getEffectiveType(tpe: c.Type): c.Type = {
+    if (tpe <:< c.typeOf[Option[_]] || tpe <:< c.typeOf[Traversable[_]]) {
+      tpe.typeArgs.head
+    } else {
+      tpe
+    }
+  }
+
+  def getFields(tpe: c.Type): Map[String, c.Symbol] = {
+    import c.universe._
+
+    val ctor = tpe.decl(termNames.CONSTRUCTOR).asMethod
+    val params = ctor.paramLists.head
+
+    params.map(s => s.name.toString -> s).toMap
   }
 }

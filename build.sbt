@@ -2,7 +2,6 @@ import ReleaseTransformations._
 
 lazy val scala212 = "2.12.8"
 lazy val scala211 = "2.11.12"
-lazy val scala210 = "2.10.7"
 
 lazy val root = project in file(".") aggregate (core, casbah, reactivemongo, scala_driver) settings (
   commonSettings,
@@ -20,16 +19,9 @@ lazy val core = (project in file("core"))
     commonSettings,
     publishSettings,
     releaseSettings,
-    crossScalaVersions := Seq(scala212, scala211, scala210),
-    libraryDependencies ++= {
-      CrossVersion.partialVersion(scalaVersion.value) match {
-        case Some((2, v)) if v >= 11 =>
-          Seq(
-            "org.scala-lang.modules" %% "scala-parser-combinators" % "1.1.0"
-          )
-        case _ => Nil
-      }
-    } ++ Seq(
+    crossScalaVersions := Seq(scala212, scala211),
+    libraryDependencies ++= Seq(
+      "org.scala-lang.modules" %% "scala-parser-combinators" % "1.1.0",
       "org.scalacheck" %% "scalacheck" % "1.14.0" % Test,
       "org.scala-lang" % "scala-compiler" % scalaVersion.value % Test
     )
@@ -40,7 +32,7 @@ lazy val casbah = (project in file("casbah"))
   .settings(
     name := "mongoquery-casbah",
     commonSettings,
-    crossScalaVersions := Seq(scala212, scala211, scala210),
+    crossScalaVersions := Seq(scala212, scala211),
     publishSettings,
     releaseSettings,
     libraryDependencies += "org.mongodb" %% "casbah-core" % "3.1.1" % Provided
@@ -49,7 +41,7 @@ lazy val casbah = (project in file("casbah"))
 lazy val scala_driver = (project in file("scala_driver"))
   .dependsOn(core % "test->test ; compile->compile")
   .settings(
-    name := "mogno-scala-driver",
+    name := "mongoquery-scala-driver",
     commonSettings,
     crossScalaVersions := Seq(scala212, scala211),
     publishSettings,
@@ -62,7 +54,7 @@ lazy val reactivemongo = (project in file("reactivemongo"))
   .settings(
     name := "mongoquery-reactive",
     commonSettings,
-    crossScalaVersions := Seq(scala212, scala211, scala210),
+    crossScalaVersions := Seq(scala212, scala211),
     publishSettings,
     releaseSettings,
     resolvers += Resolver.typesafeRepo("releases"),
@@ -72,30 +64,10 @@ lazy val reactivemongo = (project in file("reactivemongo"))
 lazy val commonSettings = Seq(
   scalaVersion := scala212,
   scalacOptions ++= Seq("-deprecation", "-unchecked", "-feature"),
-  libraryDependencies ++= {
-    CrossVersion.partialVersion(scalaVersion.value) match {
-      case Some((2, 10)) =>
-        Seq(
-          compilerPlugin("org.scalamacros" % "paradise" % "2.1.1" cross CrossVersion.full),
-          "org.scalamacros" %% "quasiquotes" % "2.1.1"
-        )
-      case Some((2, x)) if x >= 11 => Seq()
-      case _                       => sys.error("Unsupported Scala version")
-    }
-  },
   libraryDependencies ++= Seq(
     "org.scala-lang" % "scala-reflect" % scalaVersion.value,
     "org.scalatest" %% "scalatest" % "3.0.8" % "test"
-  ),
-  Compile / unmanagedSourceDirectories ++= {
-    (Compile / unmanagedSourceDirectories).value
-      .filter(_.getName == "scala")
-      .flatMap(f =>
-        CrossVersion.partialVersion(scalaVersion.value) match {
-          case Some((2, 10))           => Seq()
-          case Some((2, x)) if x >= 11 => Seq(new File(f.getPath + "-2.11+"))
-      })
-  }
+  )
 )
 
 lazy val publishSettings = Seq(
