@@ -19,5 +19,5 @@ package com.github.limansky.mongoquery.scaladriver
 import com.github.limansky.mongoquery.core.CompileErrorsTest
 
 class DriverCompileErrorTest extends CompileErrorsTest {
-  override val imports = "com.github.limansky.mongoquery.scala_driver._" :: super.imports
+  override val imports = "com.github.limansky.mongoquery.scaladriver._" :: super.imports
 }
