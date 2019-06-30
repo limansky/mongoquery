@@ -1,4 +1,4 @@
-package com.github.limansky.mongoquery.scala_driver
+package com.github.limansky.mongoquery.scaladriver
 
 import org.mongodb.scala.bson.{ BsonDocument, BsonNull, BsonObjectId, BsonRegularExpression }
 import org.scalatest.{ FlatSpec, Matchers }

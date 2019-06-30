@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.github.limansky.mongoquery.scala_driver
+package com.github.limansky.mongoquery.scaladriver
 
 import com.github.limansky.mongoquery.core.CompileErrorsTest
 

@@ -16,7 +16,8 @@
 
 package com.github.limansky.mongoquery.core.bsonparser
 
-import com.github.limansky.mongoquery.core.BSON.Member
+import com.github.limansky.mongoquery.core.BSON
+
 import scala.util.parsing.combinator.syntactical.StdTokenParsers
 import scala.util.parsing.input.CharArrayReader
 
@@ -105,7 +106,7 @@ class Parser extends StdTokenParsers {
 
   def operator: Parser[Operator] = elem("operator", _.isInstanceOf[OperatorLit]) ^^ (o => Operator(o.chars))
 
-  def variable = elem("variable", _ == Variable) ^^^ Placeholder
+  def variable: Parser[BSON.Placeholder.type] = elem("variable", _ == Variable) ^^^ Placeholder
 
   def int: Parser[Int] = numericLit ^^ (_.toInt)
 
@@ -119,7 +120,7 @@ class Parser extends StdTokenParsers {
 
   def double: Parser[Double] = elem("double", _.isInstanceOf[DoubleLit]) ^^ (_.chars.toDouble)
 
-  def objectIdValue = acceptIf(t => t.isInstanceOf[StringLit] && t.chars.length() == 24 && t.chars.forall(hexDigits.contains))(t => "Invalid object id: " + t.chars) ^^ (v => v.chars)
+  def objectIdValue: Parser[String] = acceptIf(t => t.isInstanceOf[StringLit] && t.chars.length() == 24 && t.chars.forall(hexDigits.contains))(t => "Invalid object id: " + t.chars) ^^ (v => v.chars)
 
   def id: Parser[Id] = keyword("ObjectId") ~> "(" ~> objectIdValue <~ ")" ^^ Id
 

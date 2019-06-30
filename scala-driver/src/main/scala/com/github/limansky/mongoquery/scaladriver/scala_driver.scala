@@ -3,7 +3,7 @@ package com.github.limansky.mongoquery
 import scala.language.experimental.macros
 import org.mongodb.scala.bson.BsonDocument
 
-package object scala_driver {
+package object scaladriver {
 
   class QueryWrapper {
     def apply[T]: BsonDocument = macro ScalaDriverMacro.r_mqt_impl[T]

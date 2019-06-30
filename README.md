@@ -19,19 +19,24 @@ How to use
 
 ### Installation ###
 
+Since version 0.7 MongoQuery supports only Scala 2.11 and 2.12.  If you are still using Scala 2.10
+you can use MongoQuery 0.6 (or any version before).
+
 MongoQuery is published to Sonatype maven repository.  Add following dependency to
 libraryDependencies in your SBT build file:
 
 ```
-"com.github.limansky" %% "mongoquery-casbah" % "0.6"    // for Casbah users
-"com.github.limansky" %% "mongoquery-reactive" % "0.6"  // for ReactiveMongo users
+"com.github.limansky" %% "mongoquery-casbah" % "0.7"       // for Casbah users
+"com.github.limansky" %% "mongoquery-reactive" % "0.7"     // for ReactiveMongo users
+"com.github.limansky" %% "mongoquery-scala-driver" % "0.7" // for Mongo Scala driver
 ```
 
 If you want use latest development version:
 
 ```
-"com.github.limansky" %% "mongoquery-casbah" % "0.7-SNAPSHOT"    // Casbah users
-"com.github.limansky" %% "mongoquery-reactive" % "0.7-SNAPSHOT"  // ReactiveMongo users
+"com.github.limansky" %% "mongoquery-casbah" % "0.8-SNAPSHOT"       // Casbah users
+"com.github.limansky" %% "mongoquery-reactive" % "0.8-SNAPSHOT"     // ReactiveMongo users
+"com.github.limansky" %% "mongoquery-scala-driver" % "0.8-SNAPSHOT" // for Mongo Scala driver
 ```
 
 ### mq interpolator ###
@@ -59,6 +64,14 @@ collection.
   enumerate().apply(Iteratee.foreach { doc =>
   println("found document: " + BSONDocument.pretty(doc))
 })
+```
+
+For [Mongo Scala Driver][] it creates `BsonDocument`s:
+
+```Scala
+import com.github.limansky.mongoquery.scaladriver._
+
+collection.insertOne(mq"""{ name: "John", lastName: "Doe", age : 42 }""")
 ```
 
 Since the query is defined inside of the string interpolator, the words started
@@ -142,4 +155,5 @@ Any feedback is very welcome!  You can ask any questions in [MongoQuery mailing 
 [MongoDB]: http://www.mongodb.org/
 [Casbah]: https://github.com/mongodb/casbah
 [ReactiveMongo]: http://reactivemongo.org/
+[Mongo Scala Driver]: http://mongodb.github.io/mongo-scala-driver/
 [maillist]: https://groups.google.com/forum/#!forum/mongoquery-users

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.github.limansky.mongoquery.scala_driver
+package com.github.limansky.mongoquery.scaladriver
 
 import java.util.Date
 import org.mongodb.scala.bson.{ BsonDateTime, BsonDocument, BsonNull, BsonObjectId, BsonRegularExpression, ObjectId }
