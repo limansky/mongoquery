@@ -76,9 +76,8 @@ lazy val commonSettings = Seq(
     CrossVersion.partialVersion(scalaVersion.value) match {
       case Some((2, 10)) =>
         Seq(
-          compilerPlugin(
-            "org.scalamacros" % "paradise" % "2.1.0" cross CrossVersion.full),
-          "org.scalamacros" %% "quasiquotes" % "2.1.0"
+          compilerPlugin("org.scalamacros" % "paradise" % "2.1.1" cross CrossVersion.full),
+          "org.scalamacros" %% "quasiquotes" % "2.1.1"
         )
       case Some((2, x)) if x >= 11 => Seq()
       case _                       => sys.error("Unsupported Scala version")
@@ -86,7 +85,7 @@ lazy val commonSettings = Seq(
   },
   libraryDependencies ++= Seq(
     "org.scala-lang" % "scala-reflect" % scalaVersion.value,
-    "org.scalatest" %% "scalatest" % "3.0.5" % "test"
+    "org.scalatest" %% "scalatest" % "3.0.8" % "test"
   ),
   Compile / unmanagedSourceDirectories ++= {
     (Compile / unmanagedSourceDirectories).value
@@ -120,13 +119,9 @@ lazy val publishSettings = Seq(
     else
       Some("releases" at nexus + "service/local/staging/deploy/maven2")
   },
-  pomExtra := <developers>
-    <developer>
-      <id>limansky</id>
-      <name>Mike Limansky</name>
-      <url>http://github.com/limansky</url>
-    </developer>
-  </developers>
+  developers := List(
+    Developer("limansky", "Mike Limansky", "mike.limansky@gmail.com", url("http://github.com/limansky"))
+  )
 )
 
 lazy val releaseSettings = Seq(

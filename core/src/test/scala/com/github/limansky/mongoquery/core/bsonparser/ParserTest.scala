@@ -17,9 +17,9 @@
 package com.github.limansky.mongoquery.core.bsonparser
 
 import org.scalatest.{ FlatSpec, Matchers }
-import org.scalatest.prop.GeneratorDrivenPropertyChecks
+import org.scalatestplus.scalacheck.ScalaCheckDrivenPropertyChecks
 
-class ParserTest extends FlatSpec with Matchers with GeneratorDrivenPropertyChecks {
+class ParserTest extends FlatSpec with Matchers with ScalaCheckDrivenPropertyChecks {
 
   import com.github.limansky.mongoquery.core.BSON._
 

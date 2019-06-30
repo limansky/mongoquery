@@ -16,10 +16,11 @@
 package com.github.limansky.mongoquery.core.bsonparser
 
 import org.scalatest.{ FlatSpec, Matchers }
-import org.scalatest.prop.{ GeneratorDrivenPropertyChecks, TableDrivenPropertyChecks }
+import org.scalatestplus.scalacheck.ScalaCheckDrivenPropertyChecks
+import org.scalatest.prop.TableDrivenPropertyChecks
 
 class UtilTest extends FlatSpec with Matchers
-  with GeneratorDrivenPropertyChecks
+  with ScalaCheckDrivenPropertyChecks
   with TableDrivenPropertyChecks {
 
   "Levenshtein" should "be zero for matching strings" in {
