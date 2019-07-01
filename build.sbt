@@ -6,6 +6,7 @@ lazy val scala211 = "2.11.12"
 lazy val root = project in file(".") aggregate (core, casbah, reactivemongo, scalaDriver) settings (
   commonSettings,
   publishSettings,
+  releaseSettings,
   // According to the docs - crossScalaVersions must be set to Nil on the aggregating project to avoid double publishing
   crossScalaVersions := Nil,
   publish := {},
